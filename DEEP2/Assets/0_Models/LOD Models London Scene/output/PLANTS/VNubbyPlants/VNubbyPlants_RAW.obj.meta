@@ -1,0 +1,184 @@
+fileFormatVersion: 2
+guid: 8ef3b5cdcc65c414280747ff5d477cc7
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: NurbsPath_000
+    100002: NurbsPath_001
+    100004: NurbsPath_002
+    100006: NurbsPath_003
+    100008: NurbsPath_004
+    100010: NurbsPath_005
+    100012: NurbsPath_006
+    100014: NurbsPath_007
+    100016: NurbsPath_008
+    100018: //RootNode
+    400000: NurbsPath_000
+    400002: NurbsPath_001
+    400004: NurbsPath_002
+    400006: NurbsPath_003
+    400008: NurbsPath_004
+    400010: NurbsPath_005
+    400012: NurbsPath_006
+    400014: NurbsPath_007
+    400016: NurbsPath_008
+    400018: //RootNode
+    2300000: NurbsPath_000
+    2300002: NurbsPath_001
+    2300004: NurbsPath_002
+    2300006: NurbsPath_003
+    2300008: NurbsPath_004
+    2300010: NurbsPath_005
+    2300012: NurbsPath_006
+    2300014: NurbsPath_007
+    2300016: NurbsPath_008
+    3300000: NurbsPath_000
+    3300002: NurbsPath_001
+    3300004: NurbsPath_002
+    3300006: NurbsPath_003
+    3300008: NurbsPath_004
+    3300010: NurbsPath_005
+    3300012: NurbsPath_006
+    3300014: NurbsPath_007
+    3300016: NurbsPath_008
+    4300000: NurbsPath_000
+    4300002: NurbsPath_001
+    4300004: NurbsPath_002
+    4300006: NurbsPath_003
+    4300008: NurbsPath_004
+    4300010: NurbsPath_005
+    4300012: NurbsPath_006
+    4300014: NurbsPath_007
+    4300016: NurbsPath_008
+    2186277476908879412: ImportLogs
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: NurbsPath_000Mat
+    second: {fileID: 2100000, guid: f146ec42c0436544da684557bde2e343, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: NurbsPath_001Mat
+    second: {fileID: 2100000, guid: 4fec0dce83d7a6549981b4407652e10c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: NurbsPath_002Mat
+    second: {fileID: 2100000, guid: 929d1c5c7bd41494085bd55f8ee93425, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: NurbsPath_003Mat
+    second: {fileID: 2100000, guid: f9def5ffc9c84524d9b8ad28e2a6cad7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: NurbsPath_004Mat
+    second: {fileID: 2100000, guid: 200a723611aa40a4f9d20530e5e52812, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: NurbsPath_005Mat
+    second: {fileID: 2100000, guid: b822561d5c0681b4db0d27da96d516c9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: NurbsPath_006Mat
+    second: {fileID: 2100000, guid: 14047916e0366514e9d6f3692a09c294, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: NurbsPath_007Mat
+    second: {fileID: 2100000, guid: dd4d9cdc0d6bee8439c9fd6d476c9c6f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: NurbsPath_008Mat
+    second: {fileID: 2100000, guid: 15ee947c64646a84fbaffc6910f7ed25, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
