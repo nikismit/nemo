@@ -32,7 +32,7 @@ Shader "NEMO/NEMO V_square coral"
 		{
 			o.Albedo = _Basecolor.rgb;
 			float2 uv_TexCoord19 = i.uv_texcoord * float2( 2,2 );
-			float clampResult8 = clamp( ( (0.5 + (uv_TexCoord19.x - 0.0) * (1.0 - 0.5) / (1.0 - 0.0)) + ( ( globalBreathValue * -1.0 ) + 0.5 ) ) , -10.0 , 1.0 );
+			float clampResult8 = clamp( ( (0.5 + (uv_TexCoord19.y - 0.0) * (1.0 - 0.5) / (1.0 - 0.0)) + ( ( globalBreathValue * -1.0 ) + 0.5 ) ) , -10.0 , 1.0 );
 			float3 lerpResult3 = lerp( float3(1,1,1) , float3(0,0,0) , clampResult8);
 			o.Emission = ( float4( lerpResult3 , 0.0 ) * _Glowcolor * _Luminositygradient ).rgb;
 			o.Alpha = 1;
@@ -44,10 +44,10 @@ Shader "NEMO/NEMO V_square coral"
 	CustomEditor "ASEMaterialInspector"
 }
 /*ASEBEGIN
-Version=16200
--48;233;765;780;2196.699;-209.895;1;True;False
+Version=16400
+237;129;765;882;2196.699;-158.895;1;True;False
 Node;AmplifyShaderEditor.TextureCoordinatesNode;19;-1791.963,384.0615;Float;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;2,2;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.RangedFloatNode;14;-1872.968,515.8823;Float;False;Global;globalBreathValue;globalBreathValue;3;0;Create;True;0;0;False;0;1;0;0;2;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;14;-1872.968,515.8823;Float;False;Global;globalBreathValue;globalBreathValue;3;0;Create;True;0;0;False;0;1;0.4714595;0;2;0;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;15;-1809.04,597.9138;Float;False;Constant;_Value2;Value 2;0;0;Create;True;0;0;False;0;-1;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;13;-1534.252,643.1862;Float;False;Constant;_Value1;Value 1;0;0;Create;True;0;0;False;0;0.5;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.ComponentMaskNode;16;-1534.882,386.0811;Float;False;True;False;False;False;1;0;FLOAT;0;False;1;FLOAT;0
@@ -59,12 +59,12 @@ Node;AmplifyShaderEditor.Vector3Node;7;-895.4084,136.39;Float;False;Constant;_Ve
 Node;AmplifyShaderEditor.Vector3Node;6;-895.4085,0.7598938;Float;False;Constant;_Vector0;Vector 0;0;0;Create;True;0;0;False;0;1,1,1;0,0,0;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.ClampOpNode;8;-895.4086,384.532;Float;False;3;0;FLOAT;0;False;1;FLOAT;-10;False;2;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.ColorNode;4;-638.5316,385.1498;Float;False;Property;_Glowcolor;Glow color;1;0;Create;True;0;0;False;0;1,0,0,0;1,0,0,0;False;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.RangedFloatNode;5;-651.6028,619.7756;Float;False;Property;_Luminositygradient;Luminosity gradient;2;0;Create;True;0;0;False;0;0;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;5;-651.6028,619.7756;Float;False;Property;_Luminositygradient;Luminosity gradient;2;0;Create;True;0;0;False;0;0;3;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.LerpOp;3;-639.5802,255.781;Float;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;2;-256.4624,256.8635;Float;False;3;3;0;FLOAT3;0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
 Node;AmplifyShaderEditor.ColorNode;1;-511.4597,0.9147674;Float;False;Property;_Basecolor;Base color;0;0;Create;True;0;0;False;0;0,1,0,0;0,1,0,0;False;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;0,0;Float;False;True;2;Float;ASEMaterialInspector;0;0;Standard;NEMO/NEMO V_square coral;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Opaque;0.5;True;True;0;False;Opaque;;Geometry;All;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;0;0;False;-1;0;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;-1;-1;-1;-1;0;False;0;0;False;-1;-1;0;False;-1;0;0;0;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
-WireConnection;16;0;19;1
+Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;0,0;Float;False;True;2;Float;ASEMaterialInspector;0;0;Standard;NEMO/NEMO V_square coral;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Opaque;0.5;True;True;0;False;Opaque;;Geometry;All;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;0;0;False;-1;0;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;-1;-1;-1;-1;0;False;0;0;False;-1;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
+WireConnection;16;0;19;2
 WireConnection;12;0;14;0
 WireConnection;12;1;15;0
 WireConnection;10;0;16;0
@@ -82,4 +82,4 @@ WireConnection;2;2;5;0
 WireConnection;0;0;1;0
 WireConnection;0;2;2;0
 ASEEND*/
-//CHKSM=7C0532D04BED833D60F64FBECB8DC50BD751A9A8
+//CHKSM=6BF4CD5BC7763764F432B231B94193947A8F959E
