@@ -27,7 +27,7 @@ public class NemoPlayer2 : MonoBehaviour
 
     public bool backwardOrUp;
 
-    private float diraction = 1;
+    private float diraction = 0;
 
     public float smoother = 0.8f;
 
