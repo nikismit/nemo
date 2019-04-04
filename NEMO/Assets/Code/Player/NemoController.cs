@@ -6,9 +6,12 @@ using System;
 using System.IO;
 using System.IO.Ports;
 using System.Threading;
+using UnityEngine.SceneManagement;
 
 public class NemoController : MonoBehaviour
 {
+
+
     public string NemoControllerValueRaw = "E:10334 340";
     public string NemoControllerValueParsed;
     public string[] parsed;
@@ -25,6 +28,9 @@ public class NemoController : MonoBehaviour
     public States breathForCheck = States.breathingIn;
     public float breathBuffer = 0.01f;          // buffer used to see if the player is breathing in or out
 
+
+
+
     delegate void toGetInput();
     toGetInput GetInput;
 
@@ -35,26 +41,70 @@ public class NemoController : MonoBehaviour
     private bool runThread = false;
     private string contollerValue;
 
+    public delegate void GameStartHandler();
+    public event GameStartHandler GameStartEvent;
+    public delegate void GameEndHandler();
+    public event GameEndHandler GameEndEvent;
+    public delegate void GameResetHandler();
+    public event GameResetHandler GameResetEvent;
 
+    public GameEvent ControllerConnectedEvent;      // Event that invokes on finding connection with controller
+    public GameEvent BeltConnectedEvent;            // Event that invokes on connecting the belt
+    public GameEvent BeltDisconnectedEvent;         // Event that invokes on disconnecting the belt
+
+    private bool _isBeltConnected = false;
+
+    [SerializeField]
+    private bool _debug = false;                    // Show debug messages
+
+    private IEnumerator TryConnect()
+    {
+        while ((value == 666 || value == 0) && (!runThread))
+        {
+            ConnectToNemoController();
+            yield return new WaitForSeconds(1);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        ConnectToNemoController();
-        text.text = "poop";
+        StartCoroutine(TryConnect());
+        //text.text = "poop";
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!runThread)
+            return;
+
         value = GetValueFromBelt();
-        text.text = "poop: " + value;
+        //text.text = "poop: " + value;
+
+        // Belt is connected
+        if (value != 666 && value != 0 && !_isBeltConnected)
+        {
+            _isBeltConnected = true;
+            BeltConnectedEvent.Invoke();
+
+            DebugMessage("BELT CONNECTED");
+        }
+
+        // Belt is disconnected
+        if (NemoControllerValueRaw == "B:0" && _isBeltConnected)
+        {
+            _isBeltConnected = false;
+            BeltDisconnectedEvent.Invoke();
+
+            DebugMessage("BELT DISCONNECTED");
+        }
     }
 
 
     int GetValueFromBelt()
     {
-        if (NemoControllerValueRaw.Contains("E") )
+        if (NemoControllerValueRaw.Contains("E"))
             parsed = NemoControllerValueRaw.Split(',');
         //print(NemoControllerValueRaw);
         else
@@ -69,12 +119,12 @@ public class NemoController : MonoBehaviour
         bool found = false;
 
         string[] ports = SerialPort.GetPortNames();
-        print(ports.Length + " Com ports found");
+        DebugMessage(ports.Length + " Com ports found");
 
         if (ports.Length == 0)
         {
             // no controller found
-            print("nothing found");
+            DebugMessage("nothing found");
         }
         else
         {
@@ -95,9 +145,9 @@ public class NemoController : MonoBehaviour
                     NemoControllerPort.Open();
                     //deepController.DtrEnable = true; // will not receive data without this
 
-                    print(NemoControllerPort.PortName);
+                    DebugMessage(NemoControllerPort.PortName);
 
-                    print("Trying port: " + port + " ");
+                    DebugMessage("Trying port: " + port + " ");
 
 
 
@@ -108,11 +158,12 @@ public class NemoController : MonoBehaviour
                             string message = NemoControllerPort.ReadLine();
                             if (message.Length > 0)
                             {
-                                print("Message recieved on " + NemoControllerPort.PortName);
-                                print("Controller is on " + portName);
+                                DebugMessage("Message recieved on " + NemoControllerPort.PortName);
+                                DebugMessage("Controller is on " + portName);
 
                                 // we are good to go create thread for controller
                                 found = true;
+                                ControllerConnectedEvent.Invoke();		// Invoke the controller connected event
                             }
                         }
                         catch (TimeoutException) { }
@@ -138,8 +189,8 @@ public class NemoController : MonoBehaviour
             {
                 portName = NemoControllerPort.PortName;
 
-                print("Controller is detected on " + portName);
-                print("is " + NemoControllerPort.PortName + " open: " + NemoControllerPort.IsOpen);
+                DebugMessage("Controller is detected on " + portName);
+                DebugMessage("is " + NemoControllerPort.PortName + " open: " + NemoControllerPort.IsOpen);
 
                 // creat the thread for the controller
                 runThread = true;
@@ -148,9 +199,8 @@ public class NemoController : MonoBehaviour
 
                 // it is working and kick things off 
 
-
             }
-          
+
         }
     }
 
@@ -162,7 +212,7 @@ public class NemoController : MonoBehaviour
             {
                 try
                 {
-                     NemoControllerValueRaw = NemoControllerPort.ReadLine();
+                    NemoControllerValueRaw = NemoControllerPort.ReadLine();
                 }
                 catch (System.Exception) { }
             }
@@ -173,5 +223,11 @@ public class NemoController : MonoBehaviour
     {
         NemoControllerPort.Close();
         runThread = false;
+    }
+
+    private void DebugMessage(string message)
+    {
+        if (_debug)
+            Debug.Log(message);
     }
 }
