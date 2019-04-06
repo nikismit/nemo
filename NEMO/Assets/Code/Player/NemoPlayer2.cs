@@ -41,7 +41,10 @@ public class NemoPlayer2 : MonoBehaviour
     public float fullnessCalibrationRate = 1f;
     private float range;
 
-    public Vector3 startPosition;		// Start position of the player
+    public Vector3 startPosition;       // Start position of the player
+
+    public GameEvent BreathingInEvent;
+    public GameEvent BreathingOutEvent;
 
     void Awake()
     {
@@ -97,18 +100,25 @@ public class NemoPlayer2 : MonoBehaviour
 
         if (total > 0)
         {
-            // breathing in maybe 
-            breathState = States.breathingIn;
-            //diraction = 1;
-
-            speed = forwardSpeed;
+            if (breathState != States.breathingIn)
+            {
+                BreathingInEvent.Invoke();
+                // breathing in maybe 
+                breathState = States.breathingIn;
+                //diraction = 1;
+                speed = forwardSpeed;
+            }
         }
         else
         {
-            // breathing out maybe 
-            breathState = States.breathingOut;
-            //diraction = -1;
-            speed = backSpeed;
+            if (breathState != States.breathingOut)
+            {
+                BreathingOutEvent.Invoke();
+                // breathing out maybe 
+                breathState = States.breathingOut;
+                //diraction = -1;
+                speed = backSpeed;
+            }
         }
         oldFullness = rawFullness;
 
@@ -129,7 +139,6 @@ public class NemoPlayer2 : MonoBehaviour
         // move the player 
         if (backwardOrUp)
         {
-
             transform.Translate(Vector3.forward * speed * diraction * Time.deltaTime);
 
         }
