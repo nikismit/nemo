@@ -427,7 +427,7 @@ namespace AmplifyShaderEditor
 				}
 				if( !string.IsNullOrEmpty( currPropertyName ) )
 				{
-					string finalTexCoordName = "uv" + currPropertyName;
+					string finalTexCoordName = "uv" + m_textureCoordChannel + currPropertyName;
 					string dummyPropertyTexcoords = currPropertyName + "_ST";
 					dataCollector.AddToUniforms( UniqueId, "float4", dummyPropertyTexcoords );
 
@@ -445,7 +445,7 @@ namespace AmplifyShaderEditor
 				}
 				else
 				{
-					string finalTexCoordName = "uv" + OutputId;
+					string finalTexCoordName = "uv" + m_textureCoordChannel + OutputId;
 					tiling = m_tilingPort.GeneratePortInstructions( ref dataCollector );
 					offset = m_offsetPort.GeneratePortInstructions( ref dataCollector );
 

@@ -173,12 +173,15 @@ namespace AmplifyShaderEditor
 
 			for( int i = 0; i < functionCount; i++ )
 			{
-				NodeAttributes attribute = new NodeAttributes( allFunctions[ i ].FunctionName, allFunctions[ i ].CustomNodeCategory, allFunctions[ i ].Description, KeyCode.None, true, 0, int.MaxValue, typeof( AmplifyShaderFunction ) );
-				System.Type type = typeof( FunctionNode );
+				if( !allFunctions[ i ].Hidden )
+				{
+					NodeAttributes attribute = new NodeAttributes( allFunctions[ i ].FunctionName, allFunctions[ i ].CustomNodeCategory, allFunctions[ i ].Description, KeyCode.None, true, 0, int.MaxValue, typeof( AmplifyShaderFunction ) );
+					System.Type type = typeof( FunctionNode );
 
-				ContextMenuItem newItem = new ContextMenuItem( attribute, type, attribute.Name, attribute.Category, attribute.Description, allFunctions[ i ], attribute.ShortcutKey );
-				m_items.Add( newItem );
-				m_itemFunctions.Add( newItem );
+					ContextMenuItem newItem = new ContextMenuItem( attribute, type, attribute.Name, attribute.Category, attribute.Description, allFunctions[ i ], attribute.ShortcutKey );
+					m_items.Add( newItem );
+					m_itemFunctions.Add( newItem );
+				}
 			}
 
 			//Sort out the final list by name

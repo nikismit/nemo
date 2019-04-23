@@ -41,6 +41,7 @@ namespace AmplifyShaderEditor
 				else
 				{
 					UIUtils.ShowMessage( m_nodeAttribs.Name + " does not work properly on Vertex ports" );
+					return GenerateErrorValue();
 				}
 			}
 
