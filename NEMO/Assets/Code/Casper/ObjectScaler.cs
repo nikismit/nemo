@@ -9,9 +9,13 @@ public class ObjectScaler : MonoBehaviour
 
 	private Vector3 _startingScale;
 
-    private float _scale = 0f;
+	private float _scale = 0f;
+
 	private float _timer = 0f;
+	public float CurrentGrowTime { get => _timer; }
+
 	private bool _isGrowing = true;
+	public bool IsGrowing { get => _isGrowing; }
 
 	void Start()
 	{

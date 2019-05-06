@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Ports;
 using System.Threading;
 using UnityEngine.SceneManagement;
+using CM;
 
 public class NemoController : MonoBehaviour
 {
@@ -54,9 +55,6 @@ public class NemoController : MonoBehaviour
 
     private bool _isBeltConnected = false;
 
-    [SerializeField]
-    private bool _debug = false;                    // Show debug messages
-
     private IEnumerator TryConnect()
     {
         while ((value == 666 || value == 0) && (!runThread))
@@ -66,8 +64,13 @@ public class NemoController : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
+	private void Awake()
+	{
+		CM_Debug.AddCategory("NEMO Controller");
+	}
+
+	// Start is called before the first frame update
+	void Start()
     {
         StartCoroutine(TryConnect());
         //text.text = "poop";
@@ -88,7 +91,7 @@ public class NemoController : MonoBehaviour
             _isBeltConnected = true;
             BeltConnectedEvent.Invoke();
 
-            DebugMessage("BELT CONNECTED");
+            CM_Debug.Log("NEMO Controller", "BELT CONNECTED");
         }
 
         // Belt is disconnected
@@ -97,7 +100,7 @@ public class NemoController : MonoBehaviour
             _isBeltConnected = false;
             BeltDisconnectedEvent.Invoke();
 
-            DebugMessage("BELT DISCONNECTED");
+			CM_Debug.Log("NEMO Controller", "BELT DISCONNECTED");
         }
     }
 
@@ -119,12 +122,12 @@ public class NemoController : MonoBehaviour
         bool found = false;
 
         string[] ports = SerialPort.GetPortNames();
-        DebugMessage(ports.Length + " Com ports found");
+		CM_Debug.Log("NEMO Controller", ports.Length + " Com ports found");
 
         if (ports.Length == 0)
         {
-            // no controller found
-            DebugMessage("nothing found");
+			// no controller found
+			CM_Debug.Log("NEMO Controller", "nothing found");
         }
         else
         {
@@ -143,11 +146,11 @@ public class NemoController : MonoBehaviour
                     //NemoControllerPort.WriteTimeout = 50;
                     //NemoControllerPort.NewLine = "\n";
                     NemoControllerPort.Open();
-                    //deepController.DtrEnable = true; // will not receive data without this
+					//deepController.DtrEnable = true; // will not receive data without this
 
-                    DebugMessage(NemoControllerPort.PortName);
+					CM_Debug.Log("NEMO Controller", NemoControllerPort.PortName);
 
-                    DebugMessage("Trying port: " + port + " ");
+					CM_Debug.Log("NEMO Controller", "Trying port: " + port + " ");
 
 
 
@@ -158,8 +161,8 @@ public class NemoController : MonoBehaviour
                             string message = NemoControllerPort.ReadLine();
                             if (message.Length > 0)
                             {
-                                DebugMessage("Message recieved on " + NemoControllerPort.PortName);
-                                DebugMessage("Controller is on " + portName);
+								CM_Debug.Log("NEMO Controller", "Message recieved on " + NemoControllerPort.PortName);
+								CM_Debug.Log("NEMO Controller", "Controller is on " + portName);
 
                                 // we are good to go create thread for controller
                                 found = true;
@@ -189,8 +192,8 @@ public class NemoController : MonoBehaviour
             {
                 portName = NemoControllerPort.PortName;
 
-                DebugMessage("Controller is detected on " + portName);
-                DebugMessage("is " + NemoControllerPort.PortName + " open: " + NemoControllerPort.IsOpen);
+				CM_Debug.Log("NEMO Controller", "Controller is detected on " + portName);
+				CM_Debug.Log("NEMO Controller", "is " + NemoControllerPort.PortName + " open: " + NemoControllerPort.IsOpen);
 
                 // creat the thread for the controller
                 runThread = true;
@@ -223,11 +226,5 @@ public class NemoController : MonoBehaviour
     {
         NemoControllerPort.Close();
         runThread = false;
-    }
-
-    private void DebugMessage(string message)
-    {
-        if (_debug)
-            Debug.Log(message);
     }
 }
