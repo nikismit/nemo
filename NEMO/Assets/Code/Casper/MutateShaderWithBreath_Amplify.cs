@@ -15,7 +15,6 @@
 // 5 - ENJOY!       
 ///////////////////////////////////
 
-
 using UnityEngine;
 
 public class MutateShaderWithBreath_Amplify : MonoBehaviour
@@ -23,10 +22,22 @@ public class MutateShaderWithBreath_Amplify : MonoBehaviour
 	public string NodeName = "globalBreathValue";
 	public float maxBrightness = 5;
 	public bool invert = false;
+	public int calculations = 10;
 
-	private float _difference = 0;
+	private float _averageDifference = 0;
 	private float _minValue = 0;
-	private float _maxValue = 1;
+	private float _averageMaxValue = 1;
+
+	private float[] _differenceList = new float[10];
+	private int _differenceListIndex = 0;
+	private float[] _maxValueList = new float[10];
+	private int _maxValueListIndex = 0;
+
+	private void Start()
+	{
+		_differenceList = new float[calculations];
+		_maxValueList = new float[calculations];
+	}
 
 	private void Update()
 	{
@@ -35,12 +46,12 @@ public class MutateShaderWithBreath_Amplify : MonoBehaviour
 		// Normal
 		if (!invert)
 		{
-			value = Mathf.Lerp(0, maxBrightness, (_difference - NemoPlayer2._instance.fullness) / _maxValue);
+			value = Mathf.Lerp(0, maxBrightness, (_averageDifference - NemoPlayer2._instance.fullness) / _averageMaxValue);
 		}
 		// Inverted
 		else
 		{
-			value = Mathf.Lerp(maxBrightness, 0, (_difference - NemoPlayer2._instance.fullness) / _maxValue);
+			value = Mathf.Lerp(maxBrightness, 0, (_averageDifference - NemoPlayer2._instance.fullness) / _averageMaxValue);
 		}
 
 		Shader.SetGlobalFloat(NodeName, value);
@@ -48,11 +59,42 @@ public class MutateShaderWithBreath_Amplify : MonoBehaviour
 
 	public void SetMinValue()
 	{
-		_difference = NemoPlayer2._instance.fullness;
+		_differenceList[_differenceListIndex] = NemoPlayer2._instance.fullness;
+
+		_differenceListIndex++;
+
+		if (_differenceListIndex >= _differenceList.Length)
+		{
+			_differenceListIndex = 0;
+			_averageDifference = GetAverage(_differenceList);
+		}
 	}
 
 	public void SetMaxValue()
 	{
-		_maxValue = _difference - NemoPlayer2._instance.fullness;
+		_maxValueList[_maxValueListIndex] = _averageDifference - NemoPlayer2._instance.fullness;
+
+		_maxValueListIndex++;
+
+		if (_maxValueListIndex >= _maxValueList.Length)
+		{
+			_maxValueListIndex = 0;
+			_averageMaxValue = GetAverage(_maxValueList);
+		}
+	}
+
+	public float GetAverage(float[] array)
+	{
+		float sum = 0;
+		float average = 0;
+
+		for (var i = 0; i < array.Length; i++)
+		{
+			sum += array[i];
+		}
+
+		average = sum / array.Length;
+
+		return average;
 	}
 }
