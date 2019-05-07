@@ -21,7 +21,7 @@ public class BreathSounds : MonoBehaviour {
 
     
 
-    void playIn()
+    public void playIn()
     {
         if (!breathIn.isPlaying)
             breathIn.Play();
@@ -29,7 +29,7 @@ public class BreathSounds : MonoBehaviour {
             //StartCoroutine("fadeSound", breathOut);
     }
 
-    void playOut()
+    public void playOut()
     {
         if(!breathOut.isPlaying)
             breathOut.Play();

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CM;
+using UnityEngine;
 
 public class NEMO_GameEvents : MonoBehaviour
 {
@@ -7,14 +8,16 @@ public class NEMO_GameEvents : MonoBehaviour
 	public GameEvent EndGameEvent;
 	public GameEvent ResetGameEvent;
 
-	[SerializeField]
-	private bool _debug;
-
 	public enum GameStates { WaitingForPlayer, Tutorial, Game, EndingGame };
 
 	// Current GameState
 	private GameStates _gameState = GameStates.WaitingForPlayer;
 	public GameStates GameState { get => _gameState; }
+
+	private void Awake()
+	{
+		CM_Debug.AddCategory("NEMO GameEvents");
+	}
 
 	public void StartGame()
 	{
@@ -24,7 +27,7 @@ public class NEMO_GameEvents : MonoBehaviour
 		_gameState = GameStates.Game;
 		StartGameEvent.Invoke();
 
-		DebugMessage("START GAME EVENT");
+		CM_Debug.Log("NEMO GameEvents", "START GAME EVENT");
 	}
 
 	public void StartTutorial()
@@ -35,9 +38,7 @@ public class NEMO_GameEvents : MonoBehaviour
 		_gameState = GameStates.Tutorial;
 		StartTutorialEvent.Invoke();
 
-		DebugMessage("START TUTORIAL EVENT");
-
-		StartGame();
+		CM_Debug.Log("NEMO GameEvents", "START TUTORIAL EVENT");
 	}
 
 	public void ResetGame()
@@ -45,7 +46,7 @@ public class NEMO_GameEvents : MonoBehaviour
 		_gameState = GameStates.WaitingForPlayer;
 		ResetGameEvent.Invoke();
 
-		DebugMessage("RESET GAME EVENT");
+		CM_Debug.Log("NEMO GameEvents", "RESET GAME EVENT");
 	}
 
 	public void EndGame()
@@ -56,12 +57,6 @@ public class NEMO_GameEvents : MonoBehaviour
 		_gameState = GameStates.EndingGame;
 		EndGameEvent.Invoke();
 
-		DebugMessage("END GAME EVENT");
-	}
-
-	public void DebugMessage(string message)
-	{
-		if (_debug)
-			Debug.Log(message);
+		CM_Debug.Log("NEMO GameEvents", "END GAME EVENT");
 	}
 }

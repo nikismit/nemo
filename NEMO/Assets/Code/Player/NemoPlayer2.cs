@@ -1,175 +1,196 @@
-﻿using System.Collections;
+﻿using CM;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class NemoPlayer2 : MonoBehaviour
 {
 
-    //singleton stuff
-    public static NemoPlayer2 _instance;
+	//singleton stuff
+	public static NemoPlayer2 _instance;
 
-    public NemoController controller;
-    public NEMO_GameEvents eventManager;
+	public NemoController controller;
+	public NEMO_GameEvents eventManager;
 
-    public int[] readArray = new int[10];
-    private int counter = 0;
-    private int rawFullness;
-    private int oldFullness;
-    public int fulnessDelta;
+	public int[] readArray = new int[10];
+	private int counter = 0;
+	private int rawFullness;
+	private int oldFullness;
+	public int fulnessDelta;
 
-    public enum States { breathingIn, breathingOut }
-    public States breathState = States.breathingIn;
+	public enum States { breathingIn, breathingOut }
+	public States breathState = States.breathingIn;
 
-    public float forwardSpeed = 1f;
-    public float backSpeed = 2f;
+	public float forwardSpeed = 1f;
+	public float backSpeed = 2f;
 
-    private float speed = 2f;
+	private float speed = 2f;
 
-    public bool backwardOrUp;
+	public bool backwardOrUp;
 
-    private float diraction = 0;
+	private float diraction = 0;
 
-    public float smoother = 0.8f;
+	public float smoother = 0.8f;
 
-    // the main value to be used by the game
-    // a float between 0 and 1;
-    public float fullness;
+	// the main value to be used by the game
+	// a float between 0 and 1;
+	public float fullness;
 
-    // this is to calculate fullness
-    private float fullnessLow = -200f;
-    private float fullnessHigh = 200f;
-    public float fullnessCalibrationRate = 1f;
-    private float range;
+	// this is to calculate fullness
+	private float fullnessLow = -200f;
+	private float fullnessHigh = 200f;
+	public float fullnessCalibrationRate = 1f;
+	private float range;
 
-    public Vector3 startPosition;       // Start position of the player
+	public Vector3 startPosition;       // Start position of the player
 
-    public GameEvent BreathingInEvent;
-    public GameEvent BreathingOutEvent;
+	public GameEvent BreathingInEvent;
+	public GameEvent BreathingOutEvent;
 
-    void Awake()
-    {
-        //singleton stuff
-        if (NemoPlayer2._instance == null)
-            NemoPlayer2._instance = this;
-        else
-            Destroy(gameObject);
-    }
+	private bool _canMove = false;
 
-    // Use current transform as start position
-    public void SetStartPosition()
-    {
-        startPosition = transform.position;
-    }
+	void Awake()
+	{
+		//singleton stuff
+		if (NemoPlayer2._instance == null)
+			NemoPlayer2._instance = this;
+		else
+			Destroy(gameObject);
 
-    // Reset the position from the player to the start position
-    public void ResetPosition()
-    {
-        GoToPosition goToPosition = GetComponent<GoToPosition>();
+		CM_Debug.AddCategory("NEMO Player");
+	}
 
-        if (!goToPosition.IsMoving)
-        {
-            goToPosition.Execute(startPosition);
-            goToPosition.FinishedEvent += OnResetPositionFinished;
-        }
-    }
+	// Use current transform as start position
+	public void SetStartPosition()
+	{
+		CM_Debug.Log("NEMO Player", "Setting start position to " + transform.position);
+		startPosition = transform.position;
+	}
 
-    // Reset the game after finishing moving to the start position
-    private void OnResetPositionFinished()
-    {
-        eventManager.ResetGame();
-        GetComponent<GoToPosition>().FinishedEvent -= OnResetPositionFinished;
-    }
+	// Reset the position from the player to the start position
+	public void ResetPosition()
+	{
+		GoToPosition goToPosition = GetComponent<GoToPosition>();
 
-    // Update is called once per frame
-    void Update()
-    {
-        // are they breathing in or out 
-        rawFullness = controller.value;
-        fulnessDelta = oldFullness - rawFullness;
-        //print(fulnessDelta);
-        readArray[counter] = fulnessDelta;
-        counter++;
+		if (!goToPosition.IsMoving)
+		{
+			CM_Debug.Log("NEMO Player", "Moving to " + startPosition);
+			goToPosition.Execute(startPosition);
+			goToPosition.FinishedEvent += OnResetPositionFinished;
+		}
+	}
 
-        if (counter >= readArray.Length)
-            counter = 0;
+	// Reset the game after finishing moving to the start position
+	private void OnResetPositionFinished()
+	{
+		eventManager.ResetGame();
+		GetComponent<GoToPosition>().FinishedEvent -= OnResetPositionFinished;
+	}
 
-        int total = 0;
+	// Update is called once per frame
+	void Update()
+	{
+		// are they breathing in or out 
+		rawFullness = controller.value;
+		fulnessDelta = oldFullness - rawFullness;
+		//print(fulnessDelta);
+		readArray[counter] = fulnessDelta;
+		counter++;
 
-        foreach (int i in readArray)
-            total += i;
+		if (counter >= readArray.Length)
+			counter = 0;
 
-        if (total > 0)
-        {
-            if (breathState != States.breathingIn)
-            {
-                BreathingInEvent.Invoke();
-                // breathing in maybe 
-                breathState = States.breathingIn;
-                //diraction = 1;
-                speed = forwardSpeed;
-            }
-        }
-        else
-        {
-            if (breathState != States.breathingOut)
-            {
-                BreathingOutEvent.Invoke();
-                // breathing out maybe 
-                breathState = States.breathingOut;
-                //diraction = -1;
-                speed = backSpeed;
-            }
-        }
-        oldFullness = rawFullness;
+		int total = 0;
 
-        if (fulnessDelta != 0 && breathState == States.breathingIn)
-        {
-            diraction = Mathf.Lerp(diraction, 1, Time.deltaTime * smoother);
-        }
+		foreach (int i in readArray)
+			total += i;
 
-        if (fulnessDelta != 0 && breathState == States.breathingOut)
-        {
-            diraction = Mathf.Lerp(diraction, -1, Time.deltaTime * smoother);
-        }
+		if (total > 0)
+		{
+			if (breathState != States.breathingIn)
+			{
+				BreathingInEvent.Invoke();
+				// breathing in maybe 
+				breathState = States.breathingIn;
+				//diraction = 1;
+				speed = forwardSpeed;
+			}
+		}
+		else
+		{
+			if (breathState != States.breathingOut)
+			{
+				BreathingOutEvent.Invoke();
+				// breathing out maybe 
+				breathState = States.breathingOut;
+				//diraction = -1;
+				speed = backSpeed;
+			}
+		}
+		oldFullness = rawFullness;
 
-        if (fulnessDelta == 0)
-        {
-            diraction = Mathf.Lerp(diraction, 0, Time.deltaTime * smoother);
-        }
-        // move the player 
-        if (backwardOrUp)
-        {
-            transform.Translate(Vector3.forward * speed * diraction * Time.deltaTime);
+		if (fulnessDelta != 0 && breathState == States.breathingIn)
+		{
+			diraction = Mathf.Lerp(diraction, 1, Time.deltaTime * smoother);
+		}
 
-        }
-        else
-        {
-            transform.Translate(Vector3.up * speed * diraction * Time.deltaTime);
-        }
+		if (fulnessDelta != 0 && breathState == States.breathingOut)
+		{
+			diraction = Mathf.Lerp(diraction, -1, Time.deltaTime * smoother);
+		}
 
-        fullness = CalculateFullness();
-    }
+		if (fulnessDelta == 0)
+		{
+			diraction = Mathf.Lerp(diraction, 0, Time.deltaTime * smoother);
+		}
 
-    float CalculateFullness()
-    {
-        //first calibrate the top and bottom range
+		// move the player
+		if (_canMove)
+		{
+			if (backwardOrUp)
+			{
+				transform.Translate(Vector3.forward * speed * diraction * Time.deltaTime);
 
-        // tuck in the bottom range
-        if (rawFullness < fullnessLow)
-            fullnessLow = rawFullness;
-        else
-            fullnessLow += fullnessCalibrationRate * Time.deltaTime;
+			}
+			else
+			{
+				transform.Translate(Vector3.up * speed * diraction * Time.deltaTime);
+			}
+		}
 
-        // tuck in the top range
-        if (rawFullness > fullnessHigh)
-            fullnessHigh = rawFullness;
-        else
-            fullnessHigh -= fullnessCalibrationRate * Time.deltaTime;
+		fullness = CalculateFullness();
+	}
 
-        // whats the range bro?
-        range = fullnessHigh - fullnessLow;
+	float CalculateFullness()
+	{
+		//first calibrate the top and bottom range
+
+		// tuck in the bottom range
+		if (rawFullness < fullnessLow)
+			fullnessLow = rawFullness;
+		else
+			fullnessLow += fullnessCalibrationRate * Time.deltaTime;
+
+		// tuck in the top range
+		if (rawFullness > fullnessHigh)
+			fullnessHigh = rawFullness;
+		else
+			fullnessHigh -= fullnessCalibrationRate * Time.deltaTime;
+
+		// whats the range bro?
+		range = fullnessHigh - fullnessLow;
 
 
-        return ((rawFullness - fullnessLow) / range);
-    }
+		return ((rawFullness - fullnessLow) / range);
+	}
+
+	public void SetMovable()
+	{
+		_canMove = true;
+	}
+
+	public void StopMove()
+	{
+		_canMove = false;
+	}
 }
