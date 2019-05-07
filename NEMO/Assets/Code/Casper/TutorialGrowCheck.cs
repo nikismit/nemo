@@ -14,6 +14,8 @@ public class TutorialGrowCheck : MonoBehaviour
 	public GameEvent CorrectEvent;
 	public GameEvent WrongEvent;
 	public GameEvent FinishedEvent;
+	public GameEvent TutorialExhalingEvent;
+	public GameEvent TutorialInhalingEvent;
 
 	private ObjectScaler _objectScaler;
 	private bool _isRoutineRunning = false;
@@ -98,7 +100,10 @@ public class TutorialGrowCheck : MonoBehaviour
 			if (_objectScaler.CurrentGrowTime >= _objectScaler.inhalingSeconds - range)
 			{
 				if (!_isRoutineRunning)
+				{
 					StartCoroutine(Routine(false));
+					TutorialExhalingEvent.Invoke();
+				}
 			}
 		}
 		// Not growing
@@ -107,7 +112,10 @@ public class TutorialGrowCheck : MonoBehaviour
 			if (_objectScaler.CurrentGrowTime >= _objectScaler.exhalingSeconds - range)
 			{
 				if (!_isRoutineRunning)
+				{
 					StartCoroutine(Routine(true));
+					TutorialInhalingEvent.Invoke();
+				}
 			}
 		}
 	}

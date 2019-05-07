@@ -23,8 +23,8 @@ public class UIFader : MonoBehaviour
 
 	public void FadeTo(float seconds, Color finalColor)
 	{
-		if (_isFading)
-			return;
+		//if (_isFading)
+			//return;
 
 		ResetVariables(finalColor);
 
@@ -34,8 +34,8 @@ public class UIFader : MonoBehaviour
 
 	public void FadeTo(Color finalColor)
 	{
-		if (_isFading)
-			return;
+		//if (_isFading)
+			//return;
 
 		ResetVariables(finalColor);
 
