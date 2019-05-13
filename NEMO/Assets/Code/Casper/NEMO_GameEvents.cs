@@ -7,8 +7,9 @@ public class NEMO_GameEvents : MonoBehaviour
 	public GameEvent StartGameEvent;
 	public GameEvent EndGameEvent;
 	public GameEvent ResetGameEvent;
+	public GameEvent EndCutsceneEvent;
 
-	public enum GameStates { WaitingForPlayer, Tutorial, Game, EndingGame };
+	public enum GameStates { WaitingForPlayer, Tutorial, Game, EndingGame, EndingCutscene };
 
 	// Current GameState
 	private GameStates _gameState = GameStates.WaitingForPlayer;
@@ -51,12 +52,23 @@ public class NEMO_GameEvents : MonoBehaviour
 
 	public void EndGame()
 	{
-		if (_gameState != GameStates.EndingGame - 1)
-			return;
+		//if (_gameState != GameStates.EndingGame - 1)
+			//return;
 
 		_gameState = GameStates.EndingGame;
 		EndGameEvent.Invoke();
 
 		CM_Debug.Log("NEMO GameEvents", "END GAME EVENT");
+	}
+
+	public void EndCutscene()
+	{
+		if (_gameState != GameStates.Game)
+			return;
+
+		_gameState = GameStates.EndingCutscene;
+		EndCutsceneEvent.Invoke();
+
+		CM_Debug.Log("NEMO GameEvents", "END CUTSCENE EVENT");
 	}
 }
