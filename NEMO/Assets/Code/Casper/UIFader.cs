@@ -1,88 +1,81 @@
-﻿using UnityEngine;
+﻿using CM.Essentials.Timing;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class UIFader : MonoBehaviour
+namespace CM.UI
 {
-	private Image _image;
-
-	private bool _isFading = false;
-	public float fadeSeconds = 0.0f;
-	private float _fadeTimer = 0.0f;
-
-	private Color _startColor;
-	private Color _endColor;
-
-	public UnityEvent onFadeStart;
-	public UnityEvent onFadeEnd;
-
-	private void Awake()
+	public class UIFader : MonoBehaviour
 	{
-		_image = GetComponent<Image>();
-	}
+		private Image _image;
 
-	public void FadeTo(float seconds, Color finalColor)
-	{
-		//if (_isFading)
-			//return;
+		public TimeData fadeInTime;
+		public TimeData fadeOutTime;
 
-		ResetVariables(finalColor);
+		private bool _isFading = false;
+		private float _fadeTimer = 0.0f;
+		private TimeData _totalFadeTime;
 
-		onFadeStart.Invoke();
-		_isFading = true;
-	}
+		private Color _startColor;
+		private Color _endColor;
 
-	public void FadeTo(Color finalColor)
-	{
-		//if (_isFading)
-			//return;
+		public UnityEvent OnFadeFinish;
 
-		ResetVariables(finalColor);
-
-		onFadeStart.Invoke();
-		_isFading = true;
-	}
-
-
-	public void FadeIn()
-	{
-		Color color = _image.color;
-		color.a = 1;
-		FadeTo(fadeSeconds, color);
-	}
-
-	public void FadeOut()
-	{
-		Color color = _image.color;
-		color.a = 0;
-		FadeTo(fadeSeconds, color);
-	}
-
-	public void StopFade()
-	{
-		_isFading = false;
-	}
-
-	private void ResetVariables(Color finalColor)
-	{
-		_fadeTimer = 0.0f;
-		_startColor = _image.color;
-		_endColor = finalColor;
-	}
-
-	private void Update()
-	{
-		if (_isFading)
+		private void Awake()
 		{
-			_image.color = Color.Lerp(_startColor, _endColor, _fadeTimer / fadeSeconds);
-			if (_fadeTimer < fadeSeconds)
+			_image = GetComponent<Image>();
+		}
+
+		public void FadeTo(Color finalColor)
+		{
+			ResetVariables(finalColor);
+
+			_isFading = true;
+		}
+
+
+		public void FadeIn()
+		{
+			Color color = _image.color;
+			color.a = 1;
+			_totalFadeTime = fadeInTime;
+			FadeTo(color);
+		}
+
+		public void FadeOut()
+		{
+			Color color = _image.color;
+			color.a = 0;
+			_totalFadeTime = fadeOutTime;
+			FadeTo(color);
+		}
+
+		public void StopFade()
+		{
+			_isFading = false;
+		}
+
+		private void ResetVariables(Color finalColor)
+		{
+			_fadeTimer = 0.0f;
+			_startColor = _image.color;
+			_endColor = finalColor;
+		}
+
+		private void Update()
+		{
+			if (_isFading)
 			{
-				_fadeTimer += Time.deltaTime;
-			}
-			else
-			{
-				onFadeEnd.Invoke();
-				_isFading = false;
+				_image.color = Color.Lerp(_startColor, _endColor, _fadeTimer / _totalFadeTime);
+				if (_fadeTimer < _totalFadeTime)
+				{
+					_fadeTimer += Time.deltaTime;
+				}
+				else
+				{
+					OnFadeFinish.Invoke();
+					_isFading = false;
+				}
 			}
 		}
 	}
