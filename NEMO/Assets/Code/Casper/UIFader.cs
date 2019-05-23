@@ -19,8 +19,7 @@ namespace CM.UI
 		private Color _startColor;
 		private Color _endColor;
 
-		public UnityEvent onFadeStart;
-		public UnityEvent onFadeEnd;
+		public UnityEvent OnFadeFinish;
 
 		private void Awake()
 		{
@@ -31,7 +30,6 @@ namespace CM.UI
 		{
 			ResetVariables(finalColor);
 
-			onFadeStart.Invoke();
 			_isFading = true;
 		}
 
@@ -75,7 +73,7 @@ namespace CM.UI
 				}
 				else
 				{
-					onFadeEnd.Invoke();
+					OnFadeFinish.Invoke();
 					_isFading = false;
 				}
 			}
