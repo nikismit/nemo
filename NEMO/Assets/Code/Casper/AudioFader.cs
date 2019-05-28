@@ -1,43 +1,32 @@
-﻿using CM.Essentials.Timing;
-using UnityEngine;
+﻿using UnityEngine;
 
-[RequireComponent(typeof(AudioSource))]
-public class AudioFader : MonoBehaviour
+namespace CM.Essentials
 {
-	public TimeData time;
-	[Range(0, 1)]
-	public float maxVolume = 1;
-
-	private AudioSource _audioSource;
-
-	private TimeInterpolationFloat _timeInterpolationFloat;
-
-	private void Awake()
+	[RequireComponent(typeof(AudioSource))]
+	public class AudioFader : FloatFader<AudioSource>
 	{
-		_audioSource = GetComponent<AudioSource>();
-	}
-
-	public void FadeIn()
-	{
-		_audioSource.Play();
-		_timeInterpolationFloat = TimeInterpolationFloat.InterpolateTo(gameObject, _audioSource.volume, maxVolume, time, null);
-	}
-
-	public void FadeOut()
-	{
-		_timeInterpolationFloat = TimeInterpolationFloat.InterpolateTo(gameObject, _audioSource.volume, 0, time, StopAudio);
-	}
-
-	private void Update()
-	{
-		if (_timeInterpolationFloat)
+		public override void FadeIn()
 		{
-			_audioSource.volume = _timeInterpolationFloat.Value;
-		}
-	}
+			base.FadeIn();
 
-	private void StopAudio()
-	{
-		_audioSource.Stop();
+			component.Play();
+		}
+
+		protected override void OnFadeOutFinish()
+		{
+			base.OnFadeOutFinish();
+
+			component.Stop();
+		}
+
+		protected override float GetComponentValue()
+		{
+			return component.volume;
+		}
+
+		protected override void SetComponentValue(float value)
+		{
+			component.volume = value;
+		}
 	}
 }

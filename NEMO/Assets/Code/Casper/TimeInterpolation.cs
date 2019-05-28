@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace CM
 {
+	public enum InterpolationType { Lerp, SmoothStep }
+
 	public abstract class TimeInterpolation<T> : MonoBehaviour
 	{
 		protected T targetInterpolation;
