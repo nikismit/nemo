@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class NEMO_GameEvents : MonoBehaviour
 {
+	public GameEvent FirstStartGameEvent;
 	public GameEvent StartTutorialEvent;
 	public GameEvent StartGameEvent;
 	public GameEvent EndGameEvent;
@@ -18,6 +19,12 @@ public class NEMO_GameEvents : MonoBehaviour
 	private void Awake()
 	{
 		CM_Debug.AddCategory("NEMO GameEvents");
+	}
+
+	private void Start()
+	{
+		FirstStartGameEvent.Invoke();
+		CM_Debug.Log("NEMO GameEvents", "FIRST START GAME EVENT");
 	}
 
 	public void StartGame()
