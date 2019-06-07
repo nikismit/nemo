@@ -6,7 +6,9 @@ namespace CM.Essentials
 	public abstract class FloatFader<T> : MonoBehaviour where T : Component
 	{
 		public InterpolationType interpolationType;
-		public TimeData time;
+		public TimeData fadeInTime;
+		public TimeData fadeOutTime;
+		public float minValue = 0;
 		public float maxValue = 1;
 
 		protected T component;
@@ -22,14 +24,14 @@ namespace CM.Essentials
 		{
 			float currentComponentValue = GetComponentValue();
 
-			_timeInterpolationFloat = TimeInterpolationFloat.InterpolateTo(gameObject, currentComponentValue, maxValue, time, OnFadeInFinish, interpolationType);
+			_timeInterpolationFloat = TimeInterpolationFloat.InterpolateTo(gameObject, currentComponentValue, maxValue, fadeInTime, OnFadeInFinish, interpolationType);
 		}
 
 		public virtual void FadeOut()
 		{
 			float currentComponentValue = GetComponentValue();
 
-			_timeInterpolationFloat = TimeInterpolationFloat.InterpolateTo(gameObject, currentComponentValue, 0, time, OnFadeOutFinish, interpolationType);
+			_timeInterpolationFloat = TimeInterpolationFloat.InterpolateTo(gameObject, currentComponentValue, minValue, fadeOutTime, OnFadeOutFinish, interpolationType);
 		}
 
 		protected abstract float GetComponentValue();
