@@ -51,12 +51,10 @@ public class CorrectedBreathingEventManager : MonoBehaviour
 		if (isBreathingIn)
 		{
 			CorrectedBreathingInEvent.Invoke();
-			Debug.Log("BREATHING IN");
 		}
 		else
 		{
 			CorrectedBreathingOutEvent.Invoke();
-			Debug.Log("BREATHING OUT");
 		}
 	}
 }
