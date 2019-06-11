@@ -2,10 +2,8 @@
 using System;
 using UnityEngine;
 
-namespace CM
+namespace CM.Essentials.Interpolation
 {
-	public enum InterpolationType { Lerp, SmoothStep }
-
 	public abstract class TimeInterpolation<T> : MonoBehaviour
 	{
 		protected T targetInterpolation;

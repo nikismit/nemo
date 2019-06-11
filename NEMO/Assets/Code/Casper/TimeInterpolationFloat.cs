@@ -1,43 +1,38 @@
-﻿using CM;
-using CM.Essentials.Timing;
+﻿using CM.Essentials.Timing;
 using System;
 using UnityEngine;
 
-public class TimeInterpolationFloat : TimeInterpolation<float>
+namespace CM.Essentials.Interpolation
 {
-	public InterpolationType interpolationType;
-
-	protected override float GetCurrentValue()
+	public class TimeInterpolationFloat : TimeInterpolation<float>
 	{
-		float value = 0.0f;
+		public InterpolationType interpolationType;
 
-		switch (interpolationType)
+		protected override float GetCurrentValue()
 		{
-			case InterpolationType.Lerp:
-				value = Mathf.Lerp(startInterpolation, TargetInterpolation, currentTime / totalTime);
-				break;
-			case InterpolationType.SmoothStep:
-				value = Mathf.SmoothStep(startInterpolation, TargetInterpolation, currentTime / totalTime);
-				break;
+			float value = 0.0f;
+
+			Easing.Function interpolationMethod = Easing.GetEasingFunction(interpolationType);
+			value = interpolationMethod(startInterpolation, TargetInterpolation, currentTime / totalTime);
+
+			return value;
 		}
 
-		return value;
-	}
+		public static TimeInterpolationFloat InterpolateTo(GameObject addComponentAt, float startInterpolation, float targetInterpolation, TimeData time, Action callback)
+		{
+			TimeInterpolationFloat timeInterpolation = addComponentAt.AddComponent<TimeInterpolationFloat>();
+			timeInterpolation.InterpolateTo(startInterpolation, targetInterpolation, time, callback, true);
 
-	public static TimeInterpolationFloat InterpolateTo(GameObject addComponentAt, float startInterpolation, float targetInterpolation, TimeData time, Action callback)
-	{
-		TimeInterpolationFloat timeInterpolation = addComponentAt.AddComponent<TimeInterpolationFloat>();
-		timeInterpolation.InterpolateTo(startInterpolation, targetInterpolation, time, callback, true);
+			return timeInterpolation;
+		}
 
-		return timeInterpolation;
-	}
+		public static TimeInterpolationFloat InterpolateTo(GameObject addComponentAt, float startInterpolation, float targetInterpolation, TimeData time, Action callback, InterpolationType interpolationType)
+		{
+			TimeInterpolationFloat timeInterpolation = addComponentAt.AddComponent<TimeInterpolationFloat>();
+			timeInterpolation.interpolationType = interpolationType;
+			timeInterpolation.InterpolateTo(startInterpolation, targetInterpolation, time, callback, true);
 
-	public static TimeInterpolationFloat InterpolateTo(GameObject addComponentAt, float startInterpolation, float targetInterpolation, TimeData time, Action callback, InterpolationType interpolationType)
-	{
-		TimeInterpolationFloat timeInterpolation = addComponentAt.AddComponent<TimeInterpolationFloat>();
-		timeInterpolation.interpolationType = interpolationType;
-		timeInterpolation.InterpolateTo(startInterpolation, targetInterpolation, time, callback, true);
-
-		return timeInterpolation;
+			return timeInterpolation;
+		}
 	}
 }

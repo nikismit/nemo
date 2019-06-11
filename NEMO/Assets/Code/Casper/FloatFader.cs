@@ -1,7 +1,7 @@
 ﻿using CM.Essentials.Timing;
 using UnityEngine;
 
-namespace CM.Essentials
+namespace CM.Essentials.Interpolation
 {
 	public abstract class FloatFader<T> : MonoBehaviour where T : Component
 	{
