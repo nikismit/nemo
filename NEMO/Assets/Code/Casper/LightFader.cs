@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using CM.Essentials.Interpolation;
 
-namespace CM.Essentials
+namespace CM.Lighting
 {
 	[RequireComponent(typeof(Light))]
 	public class LightFader : FloatFader<Light>

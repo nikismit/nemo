@@ -1,20 +1,22 @@
-﻿using CM;
-using CM.Essentials.Timing;
+﻿using CM.Essentials.Timing;
 using System;
 using UnityEngine;
 
-public class TimeInterpolationVector3 : TimeInterpolation<Vector3>
+namespace CM.Essentials.Interpolation
 {
-	protected override Vector3 GetCurrentValue()
+	public class TimeInterpolationVector3 : TimeInterpolation<Vector3>
 	{
-		return Vector3.Lerp(startInterpolation, TargetInterpolation, currentTime / totalTime);
-	}
+		protected override Vector3 GetCurrentValue()
+		{
+			return Vector3.Lerp(startInterpolation, TargetInterpolation, currentTime / totalTime);
+		}
 
-	public static TimeInterpolationVector3 InterpolateTo(GameObject addComponentAt, Vector3 startInterpolation, Vector3 targetInterpolation, TimeData time, Action callback)
-	{
-		TimeInterpolationVector3 timeInterpolation = addComponentAt.AddComponent<TimeInterpolationVector3>();
-		timeInterpolation.InterpolateTo(startInterpolation, targetInterpolation, time, callback, true);
+		public static TimeInterpolationVector3 InterpolateTo(GameObject addComponentAt, Vector3 startInterpolation, Vector3 targetInterpolation, TimeData time, Action callback)
+		{
+			TimeInterpolationVector3 timeInterpolation = addComponentAt.AddComponent<TimeInterpolationVector3>();
+			timeInterpolation.InterpolateTo(startInterpolation, targetInterpolation, time, callback, true);
 
-		return timeInterpolation;
+			return timeInterpolation;
+		}
 	}
 }
