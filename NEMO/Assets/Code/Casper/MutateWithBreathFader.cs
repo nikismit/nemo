@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CM.Essentials.Interpolation;
+using UnityEngine;
 
 namespace CM.Essentials
 {
