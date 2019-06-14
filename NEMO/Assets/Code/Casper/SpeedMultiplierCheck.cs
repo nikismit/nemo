@@ -8,6 +8,9 @@ public class SpeedMultiplierCheck : MonoBehaviour
 	public float maxSpeedMultiplier = 3;
 	public float minBeltStrengthToActivate = 0.2f;
 
+	[Header("Events")]
+	public GameEvent BadBreathingEvent;
+
 	private float _averageMinValue = -1;
 	private float _averageMaxValue = -1;
 
@@ -41,11 +44,14 @@ public class SpeedMultiplierCheck : MonoBehaviour
 			// Doing great
 			if (difference < minBeltStrengthToActivate)
 			{
+				CM_Debug.Log("SpeedMultiplierManager", "Breathing normally");
 				NemoPlayer2._instance.speedMultiplier = 1;
 				return;
 			}
 
 			// Doing bad, need a multiplier
+			CM_Debug.Log("SpeedMultiplierManager", "Breathing incorrectly, need a multiplier");
+			BadBreathingEvent.Invoke();
 			NemoPlayer2._instance.speedMultiplier = Mathf.Clamp(difference * multiplier, 1, maxSpeedMultiplier);
 		}
 	}
