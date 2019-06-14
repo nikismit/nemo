@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CM;
+using UnityEngine;
 
 public class SpeedMultiplierCheck : MonoBehaviour
 {
@@ -15,6 +16,11 @@ public class SpeedMultiplierCheck : MonoBehaviour
 	private float[] _maxValueList = new float[10];
 	private int _maxValueListIndex = 0;
 
+	private void Awake()
+	{
+		CM_Debug.AddCategory("SpeedMultiplierManager");
+	}
+
 	private void Start()
 	{
 		_minValueList = new float[calculations];
@@ -28,9 +34,9 @@ public class SpeedMultiplierCheck : MonoBehaviour
 			float difference = _averageMaxValue - _averageMinValue;
 			difference = 1 - difference;
 
-			Debug.Log("AVERAGE MAX VALUE: " + _averageMaxValue);
-			Debug.Log("AVERAGE MIN VALUE: " + _averageMinValue);
-			Debug.Log("DIFFERENCE: " + difference);
+			CM_Debug.Log("SpeedMultiplierManager", "Average max value: " + _averageMaxValue);
+			CM_Debug.Log("SpeedMultiplierManager", "Average min value: " + _averageMinValue);
+			CM_Debug.Log("SpeedMultiplierManager", "difference between average min and average max value: " + difference);
 
 			// Doing great
 			if (difference < minBeltStrengthToActivate)
@@ -47,7 +53,7 @@ public class SpeedMultiplierCheck : MonoBehaviour
 	public void BreathingIn()
 	{
 		_maxValueList[_maxValueListIndex] = NemoPlayer2._instance.fullness;
-		Debug.Log("MAX VALUE: " + NemoPlayer2._instance.fullness);
+		CM_Debug.Log("SpeedMultiplierManager", "Current max value: " + NemoPlayer2._instance.fullness);
 
 		_maxValueListIndex++;
 
@@ -61,7 +67,7 @@ public class SpeedMultiplierCheck : MonoBehaviour
 	public void BreathingOut()
 	{
 		_minValueList[_minValueListIndex] = NemoPlayer2._instance.fullness;
-		Debug.Log("MIN VALUE: " + NemoPlayer2._instance.fullness);
+		CM_Debug.Log("SpeedMultiplierManager", "Current min value: " + NemoPlayer2._instance.fullness);
 
 		_minValueListIndex++;
 
@@ -84,20 +90,6 @@ public class SpeedMultiplierCheck : MonoBehaviour
 		}
 
 		average = sum / array.Length;
-
-		/*
-		sum = 0;
-
-		for (var i = 0; i < array.Length; i++)
-		{
-			if (array[i] <= average)
-			{
-				sum += array[i];
-			}
-		}
-
-		average = sum / array.Length;
-		*/
 
 		return average;
 	}
