@@ -11,11 +11,6 @@ public class BreathSounds : MonoBehaviour {
 
     void Start()
     {
-        controller = Controller._instance;
-
-        controller.onInhaleEvent += playIn;
-        controller.onExhaleEvent += playOut;
-
         startingVol = breathIn.volume;
     }
 
@@ -51,14 +46,4 @@ public class BreathSounds : MonoBehaviour {
         StopCoroutine("fadeSound");
         
     }
-
-  
-    void OnDisable()
-    {
-       
-        controller.onInhaleEvent -= playIn;
-        controller.onExhaleEvent -= playOut;
-    }
-
-	
 }
