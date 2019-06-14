@@ -23,6 +23,7 @@ public class NemoPlayer2 : MonoBehaviour
 
 	public float forwardSpeed = 1f;
 	public float backSpeed = 2f;
+	public float speedMultiplier = 1f;
 
 	private float speed = 2f;
 
@@ -113,7 +114,7 @@ public class NemoPlayer2 : MonoBehaviour
 				// breathing in maybe 
 				breathState = States.breathingIn;
 				//diraction = 1;
-				speed = forwardSpeed;
+				speed = forwardSpeed * speedMultiplier;
 			}
 		}
 		else
@@ -124,7 +125,7 @@ public class NemoPlayer2 : MonoBehaviour
 				// breathing out maybe 
 				breathState = States.breathingOut;
 				//diraction = -1;
-				speed = backSpeed;
+				speed = backSpeed * speedMultiplier;
 			}
 		}
 		oldFullness = rawFullness;

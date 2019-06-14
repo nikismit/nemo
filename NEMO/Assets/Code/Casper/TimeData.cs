@@ -162,5 +162,25 @@ namespace CM.Essentials.Timing
 		{
 			return a.TotalSeconds > b;
 		}
+
+		public static bool operator ==(TimeData a, float b)
+		{
+			return a.TotalSeconds == b;
+		}
+
+		public static bool operator !=(TimeData a, float b)
+		{
+			return a.TotalSeconds != b;
+		}
+
+		public static bool operator ==(TimeData a, int b)
+		{
+			return a.TotalSeconds == b;
+		}
+
+		public static bool operator !=(TimeData a, int b)
+		{
+			return a.TotalSeconds != b;
+		}
 	}
 }
