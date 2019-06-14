@@ -13,7 +13,17 @@ namespace CM.Essentials.Interpolation
 			float value = 0.0f;
 
 			Easing.Function interpolationMethod = Easing.GetEasingFunction(interpolationType);
-			value = interpolationMethod(startInterpolation, TargetInterpolation, currentTime / totalTime);
+
+			if (currentTime / totalTime != currentTime / totalTime)
+			{
+				// Check for NaN (not a number)
+				value = TargetInterpolation;
+			}
+			else
+			{
+				// Interpolate the value
+				value = interpolationMethod(startInterpolation, TargetInterpolation, currentTime / totalTime);
+			}
 
 			return value;
 		}
