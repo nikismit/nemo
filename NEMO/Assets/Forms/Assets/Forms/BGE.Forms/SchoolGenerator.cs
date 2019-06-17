@@ -39,6 +39,10 @@ namespace BGE.Forms
                 while (alive.Count < targetCreatureCount)
                 {                    
                     Vector3 unit = UnityEngine.Random.insideUnitSphere;
+                    if (spawnInTopHemisphere)
+                    {
+                        unit.y = Mathf.Abs(unit.y);
+                    }
                     Vector3 pos = transform.position + unit * UnityEngine.Random.Range(0, radius * spread);
 
                     GameObject fish = null;
@@ -56,7 +60,11 @@ namespace BGE.Forms
                     }
 
                     alive.Add(fish);
-
+                    Constrain c = fish.GetComponent<Constrain>();
+                    if (c != null)
+                    {
+                        c.radius = radius;
+                    }
                     if (wg != null && spawmInWorld)
                     {
                         float groundHeight = wg.SamplePos(pos.x, pos.z);
@@ -86,11 +94,11 @@ namespace BGE.Forms
                     if (boid != null)
                     {
                         boid.school = this;
-                        Constrain c = boid.GetComponent<Constrain>();
-                        if (c != null)
+                        Constrain con = boid.GetComponent<Constrain>();
+                        if (con != null)
                         {
-                            c.radius = radius;
-                            c.centre = pos;
+                            con.radius = radius;
+                            con.centre = pos;
                         }
                         //boid.transform.position = pos;
                         boid.position = pos;
