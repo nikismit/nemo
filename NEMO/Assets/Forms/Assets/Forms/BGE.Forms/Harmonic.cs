@@ -15,6 +15,8 @@ namespace BGE.Forms
         public Axis direction = Axis.Horizontal;
         public enum Axis { Horizontal, Vertical };
 
+        public bool auto = true;
+
         [Range(0.0f, Utilities.TWO_PI)]
         public float theta = 0.0f;
 
@@ -42,7 +44,7 @@ namespace BGE.Forms
 
         public virtual void OnDrawGizmos()
         {
-            if (isActiveAndEnabled && CreatureManager.drawGizmos)
+            if (isActiveAndEnabled)
             {
                 Gizmos.color = Color.blue;
                 Vector3 wanderCircleCenter = Utilities.TransformPointNoScale(Vector3.forward * distance, transform);
@@ -63,11 +65,16 @@ namespace BGE.Forms
             float t = Utilities.Map(n, -1.0f, 1.0f, -rampedAmplitude, rampedAmplitude);
             float theta = Utilities.DegreesToRads(t);
 
+            yawRoll = boid.rotation.eulerAngles;
+            yawRoll.x = 0;
+
+
             if (direction == Axis.Horizontal)
             {
                 target.x = Mathf.Sin(theta);
                 target.z = Mathf.Cos(theta);
                 target.y = 0;
+                yawRoll.z = 0;
             }
             else
             {
@@ -78,28 +85,19 @@ namespace BGE.Forms
 
             target *= radius;
         
-            // The forces 
-            /*
-        Vector3 noPitch = boid.force;
-        //if (boid.force.magnitude < 0.01)
-        {
-            noPitch = boid.forward;
-            //noPitch.y = 0;           
-        }
-        noPitch.Normalize();
-        worldTarget = boid.position + (target + (noPitch * distance));
-        */
-
-            yawRoll = boid.rotation.eulerAngles;
-            yawRoll.x = 0;
 
             Vector3 localTarget = target + (Vector3.forward * distance);
             //Vector3 worldTarget = boid.TransformPoint(localTarget);
-
-            worldTarget = boid.position + Quaternion.Euler(yawRoll) * localTarget;        
-            rampedSpeed = Mathf.Lerp(rampedSpeed, speed, boid.TimeDelta);
-            this.theta += boid.TimeDelta * rampedSpeed * Mathf.Deg2Rad;
+            worldTarget = boid.position + Quaternion.Euler(yawRoll) * localTarget;
             return boid.SeekForce(worldTarget);
+        }
+        public override void Update()
+        {
+            if (auto)
+            {
+                rampedSpeed = Mathf.Lerp(rampedSpeed, speed, Time.deltaTime);
+                this.theta += Time.deltaTime * rampedSpeed * Mathf.Deg2Rad;
+            }
         }
     }
 }

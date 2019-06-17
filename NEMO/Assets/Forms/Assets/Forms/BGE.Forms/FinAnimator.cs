@@ -16,9 +16,8 @@ namespace BGE.Forms
         float initialAmplitude;
         public float amplitude = 40.0f;
 
+        [Range(0, 360)]
         public float rotationOffset = 220;
-
-        public float angleDamping = 1.0f;
 
         [Range(0, 8)]
         public float wigglyness = 1;
@@ -42,47 +41,45 @@ namespace BGE.Forms
         [HideInInspector]
         public float lerpedAmplitude;
 
-        [HideInInspector]
-        public float lerpedAngle = 0;
 
         // Update is called once per frame
-        void Update () {        
+        void FixedUpdate () {
+            
+            if (suspended)
+            {
+                return;
+            }
+            
             if (harmonic != null)
             {
                 theta = harmonic.theta;
                 float offset = rotationOffset * Mathf.Deg2Rad;
 
-                lerpedAmplitude = Mathf.Lerp(lerpedAmplitude, amplitude, Time.deltaTime);
-
-                float angle;
-
-
                 // Are we Banking?
-                if (((side == Side.left && boid.bank < -bankThreshold) || (side == Side.right && boid.bank > bankThreshold)))
+                /*if (((side == Side.left && boid.bank < -bankThreshold) || (side == Side.right && boid.bank > bankThreshold)))
                 {
-                    angle = Mathf.Sin((Mathf.PI * wigglyness + offset))
-              * (harmonic.rampedAmplitude / initialAmplitude) * lerpedAmplitude;
+                    lerpedAmplitude = Mathf.Lerp(lerpedAmplitude, 0, Time.deltaTime);
                 }
                 else
                 {
-                    angle = Mathf.Sin((theta * wigglyness + offset))
-              * (harmonic.rampedAmplitude / initialAmplitude) * lerpedAmplitude;
-                    
+                    lerpedAmplitude  = Mathf.Lerp(lerpedAmplitude, amplitude, Time.deltaTime);
                 }
+                */
+                lerpedAmplitude = Mathf.Lerp(lerpedAmplitude, amplitude, Time.deltaTime);
+
+                float angle = Mathf.Sin((theta * wigglyness + offset))
+                              * (harmonic.rampedAmplitude / initialAmplitude) * lerpedAmplitude;
                 angle = flipDirection ? -angle : angle;
-
-                lerpedAngle = Mathf.Lerp(lerpedAngle, angle, Time.deltaTime * angleDamping);
-
                 switch (axis)
                 {
                     case Axis.X:
-                        transform.localRotation = Quaternion.Euler(lerpedAngle, 0, 0);
+                        transform.localRotation = Quaternion.Euler(angle, 0, 0);
                         break;
                     case Axis.Y:
-                        transform.localRotation = Quaternion.Euler(0, lerpedAngle, 0);
+                        transform.localRotation = Quaternion.Euler(0, angle, 0);
                         break;
                     case Axis.Z:
-                        transform.localRotation = Quaternion.Euler(0, 0, lerpedAngle);
+                        transform.localRotation = Quaternion.Euler(0, 0, angle);
                         break;
                 }
             }

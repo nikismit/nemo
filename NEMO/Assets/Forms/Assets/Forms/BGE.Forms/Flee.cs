@@ -22,13 +22,17 @@ namespace BGE.Forms
         public override void Update()
         {
             base.Update();
-            target = targetGameObject.transform.position;
+            if (targetGameObject != null)
+            {
+                target = targetGameObject.transform.position;
+            }
         }
 
         public override Vector3 Calculate()
         {
             if (Vector3.Distance(boid.position, target) < fleeRange)
             {
+                boid.maxSpeed = originalSpeed * 5.0f;
                 return boid.FleeForce(target);
             }
             else

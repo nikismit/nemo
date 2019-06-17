@@ -6,6 +6,7 @@ namespace BGE.Forms
 {
     public class CreatureGenerator : MonoBehaviour {
 
+        public Transform parentSegmentsTo = null;
         public bool makeRotator = false;
 
         public bool scaleFins = true;
@@ -48,10 +49,30 @@ namespace BGE.Forms
         public string finList;
 
         public float lengthVariation = 0;
+
+        Dictionary<string, GameObject> bodyParts = new Dictionary<string, GameObject>();
+
+        GameObject GetCreaturePart(string key, GameObject prefab)
+        {
+            if (bodyParts.ContainsKey(key))
+            {
+                return bodyParts[key];
+            }
+            else
+            {
+                GameObject part = GameObject.Instantiate<GameObject>(prefab);
+                //if (!part.GetComponent<Renderer>().material.name.Contains("Trans"))
+                //{
+                //    part.GetComponent<Renderer>().material.color = Color.black;
+                //}
+                bodyParts[key] = part;
+                return part;
+            }
+        }
     
         public void OnDrawGizmos()
         {
-            if (!Application.isPlaying && CreatureManager.drawGizmos)
+            if (!Application.isPlaying)
             {
                 List<CreaturePart> creatureParts = CreateCreatureParams();
                 Gizmos.color = Color.yellow;
@@ -59,10 +80,20 @@ namespace BGE.Forms
                 {
                     Gizmos.DrawWireSphere(cp.position, cp.size * 0.5f);
                 }
+                LogParts(creatureParts);
+            }            
+        }
+
+        void LogParts(List<CreaturePart> creatureParts)
+        {
+            string cps = "";
+            foreach (CreaturePart cp in creatureParts)
+            {
+                cps += cp;
             }
         }
 
-        void CreateCreature()
+        public void CreateCreature()
         {
             string[] fla = finList.Split(',');
             List<CreaturePart> creatureParts = CreateCreatureParams();
@@ -73,7 +104,7 @@ namespace BGE.Forms
             for (int i = 0; i < creatureParts.Count; i ++)
             {
                 CreaturePart cp = creatureParts[i];
-                GameObject part = GameObject.Instantiate<GameObject>(cp.prefab);
+                GameObject part = GetCreaturePart("body part " + i, cp.prefab);
                 part.transform.position = cp.position;
                 if (i != 0)
                 {
@@ -83,42 +114,49 @@ namespace BGE.Forms
                 if (i == 0)
                 {
                     boid = part.GetComponent<Boid>();
+                    part.transform.parent = transform;
                 }
                 else
                 {
-                    part.transform.parent = transform;
+                    if (parentSegmentsTo != null)
+                    {
+                        part.transform.parent = parentSegmentsTo;
+                    }
+                    else
+                    {
+                        part.transform.parent = transform;
+                    }
                 }
 
                 Utilities.SetUpAnimators(part, boid);
             
                 part.transform.localScale = new Vector3(cp.size * part.transform.localScale.x, cp.size * part.transform.localScale.y, cp.size * part.transform.localScale.z);
                 part.transform.rotation = transform.rotation;
-                part.transform.parent = transform;
-              
 
+                
                 // Make fins if required            
                 if (System.Array.Find(fla, p => p == "" + i) != null)
                 {
                     float scale = cp.size / ((finNumber / 2) + 1);
-                    GameObject leftFin = GenerateFin(scale, cp, boid, (finNumber * finRotationOffset), part, FinAnimator.Side.left);
-                    GameObject rightFin = GenerateFin(scale, cp, boid, (finNumber * finRotationOffset), part, FinAnimator.Side.right);
+                    GameObject leftFin = GenerateFin(scale, cp, boid, (finNumber * finRotationOffset), part, FinAnimator.Side.left, finNumber);
+                    GameObject rightFin = GenerateFin(scale, cp, boid, (finNumber * finRotationOffset), part, FinAnimator.Side.right, finNumber);
                     finNumber++;
                 }
             }
         }
 
-        private GameObject GenerateFin(float scale, CreaturePart cp, Boid boid, float rotationOffset, GameObject part, FinAnimator.Side side)
+        private GameObject GenerateFin(float scale, CreaturePart cp, Boid boid, float rotationOffset, GameObject part, FinAnimator.Side side, int finNumber)
         {
             GameObject fin = null; 
             Vector3 pos = cp.position;
             switch (side)
             {
                 case FinAnimator.Side.left:
-                    fin = GameObject.Instantiate<GameObject>(leftFinPrefab);
+                    fin = GetCreaturePart("left fin" + finNumber, leftFinPrefab);
                     pos -= (transform.right * cp.size / 2);                
                     break;
                 case FinAnimator.Side.right:
-                    fin = GameObject.Instantiate<GameObject>(rightFinPrefab);
+                    fin = GetCreaturePart("right fin" + finNumber, rightFinPrefab);
                     pos += (transform.right * cp.size / 2);
                     break;
             }
@@ -136,6 +174,7 @@ namespace BGE.Forms
             return fin;
         }
 
+        public int seatPosition = 5;
 
 
         List<CreaturePart> CreateCreatureParams()
@@ -143,7 +182,7 @@ namespace BGE.Forms
             List<CreaturePart> cps = new List<CreaturePart>();
             float thetaInc = (Mathf.PI * frequency) / (numParts);
             float theta = this.theta;
-            float lastGap = 0;
+            float lastPartSize = 0;
             Vector3 pos = transform.position;
 
             int half = (numParts / 2) - 1; 
@@ -157,16 +196,16 @@ namespace BGE.Forms
                 }
                 else
                 {
-                    partSize = verticalSize  * Mathf.Abs(Mathf.Sin(theta)) + (verticalSize * lengthVariation * UnityEngine.Random.Range(0.0f, 1.0f));
+                    partSize = verticalSize * Mathf.Abs(Mathf.Sin(theta)); // Never used! + (verticalSize * lengthVariation * UnityEngine.Random.Range(0.0f, 1.0f));
                     theta += thetaInc;
                 }
-                pos -= ((((lastGap + partSize) / 2.0f) + gap) * transform.forward);
+                pos -= ((((lastPartSize + partSize) / 2.0f) + gap) * transform.forward);
                 if (flatten)
                 {
                     pos.y -= (partSize / 2);
                 }
-                lastGap = partSize;
-                if (i == half && seatPrefab != null)
+                lastPartSize = partSize;
+                if (i == seatPosition && seatPrefab != null)
                 {
                     cps.Add(new CreaturePart(pos
                         , partSize
@@ -192,10 +231,8 @@ namespace BGE.Forms
         void Awake() {
             // For some reason this method is being called twice
             if (transform.childCount == 0)
-            {
-                //Debug.Log(gameObject + " called awake. I have " + transform.childCount + " children");
-                CreateCreature();
-            }
+            {   CreateCreature();
+            }            
         }
 
         void Start()
@@ -229,6 +266,11 @@ namespace BGE.Forms
             this.part = part;
             this.prefab = prefab;
             this.rotation = rotation;
+        }
+
+        public override string ToString()
+        {
+            return position + ", " + size + ", " + rotation;
         }
     }
 }

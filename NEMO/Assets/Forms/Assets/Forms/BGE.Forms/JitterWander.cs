@@ -17,18 +17,16 @@ namespace BGE.Forms
         [Range(0.0f, 100.0f)]
         public float distance = 15.0f;
 
-        public float scaleUpAndDown = 1.0f;
-
         private Vector3 target;
 
         public void OnDrawGizmos()
         {
-            if (isActiveAndEnabled && CreatureManager.drawGizmos)
+            if (isActiveAndEnabled)
             {
-                Gizmos.color = Color.blue;
+                Gizmos.color = Color.cyan;
                 Vector3 wanderCircleCenter = Utilities.TransformPointNoScale(Vector3.forward*distance, transform);
                 Gizmos.DrawWireSphere(wanderCircleCenter, radius);
-                Gizmos.color = Color.gray;
+                Gizmos.color = Color.cyan;
                 Vector3 worldTarget = Utilities.TransformPointNoScale(target + Vector3.forward*distance, transform);
                 Gizmos.DrawLine(transform.position, worldTarget);
             }
@@ -50,9 +48,7 @@ namespace BGE.Forms
 
             Vector3 localTarget = target + Vector3.forward * distance;
             Vector3 worldTarget = boid.TransformPoint(localTarget);
-            Vector3 force = worldTarget - boid.position;
-            force.y *= scaleUpAndDown;
-            return force;
+            return (worldTarget - boid.position);
         }
     }
 }

@@ -8,16 +8,12 @@ namespace BGE.Forms
 {
     public class Hover:Harmonic
     {
-        public bool automatic = true;
         public override void OnDrawGizmos()
         {
-            if (CreatureManager.drawGizmos)
+            Gizmos.color = Color.yellow;
+            if (boid != null)
             {
-                Gizmos.color = Color.yellow;
-                if (boid != null)
-                {
-                    Gizmos.DrawLine(boid.transform.position, boid.transform.position + (force));
-                }
+                Gizmos.DrawLine(boid.transform.position, boid.transform.position + (force));
             }
         }
 
@@ -36,21 +32,21 @@ namespace BGE.Forms
             Vector3 force = Vector3.zero;
             theta = theta % (Utilities.TWO_PI);
             rampedAmplitude = Mathf.Lerp(rampedAmplitude, amplitude, boid.TimeDelta);
-
-            if (automatic)
+            rampedSpeed = Mathf.Lerp(rampedSpeed, speed, boid.TimeDelta);
+            if (auto)
             {
-                rampedSpeed = Mathf.Lerp(rampedSpeed, speed, boid.TimeDelta);
-                theta += boid.TimeDelta * rampedSpeed * Mathf.Deg2Rad;
+                this.theta += boid.TimeDelta * rampedSpeed * Mathf.Deg2Rad;
             }
-
             thetaDelta = theta - oldTheta;
             if ((theta < Mathf.PI & thetaDelta > 0) || (theta > Mathf.PI && thetaDelta < 0))
             {
                 force = boid.forward 
                         * Mathf.Abs(thetaDelta)
                         * rampedAmplitude;                    
-            }        
-        
+            }
+
+            
+
             oldTheta = theta;
             return force;
         }

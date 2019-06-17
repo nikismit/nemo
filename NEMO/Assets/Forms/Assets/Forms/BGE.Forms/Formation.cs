@@ -7,6 +7,7 @@ namespace BGE.Forms
     public class Formation : SteeringBehaviour
     {
         public Boid leaderBoid;
+        public GameObject leader;
         public Vector3 offset;
         private Vector3 targetPos;
         public bool useDeadReconing = false;
@@ -16,17 +17,27 @@ namespace BGE.Forms
 
         public void Start()
         {
-            base.Awake();
-            offset = transform.position - leaderBoid.transform.position;
-            offset = Quaternion.Inverse(leaderBoid.transform.rotation) * offset;
-            targetPos = transform.position;
+            if (leader  != null)
+            {
+                leaderBoid = leader.GetComponentInChildren<Boid>();
+                offset = transform.position - leader.transform.position;
+                offset = Quaternion.Inverse(leader.transform.rotation) * offset;
+                targetPos = leaderBoid.TransformPoint(offset);
+            }
         }
 
-         public void OnDrawGizmos()
+        public void RecalculateOffset()
         {
-            if (isActiveAndEnabled && CreatureManager.drawGizmos && leaderBoid != null)
+            offset = boid.position - leaderBoid.position;
+            offset = Quaternion.Inverse(leaderBoid.rotation) * offset;
+            targetPos = leaderBoid.TransformPoint(offset);
+        }
+
+        public void OnDrawGizmos()
+        {
+            if (isActiveAndEnabled && leaderBoid != null)
             {
-                Gizmos.color = Color.magenta;
+                Gizmos.color = Color.yellow;
                 if (Application.isPlaying)
                 {
                     Gizmos.DrawLine(transform.position, targetPos);
@@ -51,7 +62,12 @@ namespace BGE.Forms
                 }
                 targetPos = Vector3.Lerp(targetPos, newTarget, boid.TimeDelta * 0.2f);
 
-                return boid.ArriveForce(targetPos, 5, 5f);
+                if (Vector3.Distance(targetPos, boid.position) > reformationDistance)
+                {
+                    RecalculateOffset();                                        
+                }
+
+                return boid.ArriveForce(targetPos, boid.maxSpeed / 2, 15f);
             }
             else
             {

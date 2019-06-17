@@ -14,7 +14,7 @@ namespace BGE.Forms
 
         public void OnDrawGizmos()
         {
-            if (isActiveAndEnabled && CreatureManager.drawGizmos)
+            if (isActiveAndEnabled)
             {
                 Gizmos.color = Color.gray;
                 Gizmos.DrawWireSphere(centre, radius);
@@ -31,7 +31,6 @@ namespace BGE.Forms
     
         public override Vector3 Calculate()
         {
-
             Vector3 toTarget = boid.position - centre;
             float sphereRadius = radius;
             Vector3 steeringForce = Vector3.zero;

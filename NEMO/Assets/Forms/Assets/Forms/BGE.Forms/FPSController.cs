@@ -8,12 +8,7 @@ namespace BGE.Forms
     public class FPSController : MonoBehaviour
     {
         public GameObject mainCamera;
-
-        [SerializeField]
-        private float m_MoveSpeed = 30;
-
-        [SerializeField]
-        private float m_MouseSpeed = 50;
+        public float speed = 50.0f;
 
         public bool vrMode = true;
 
@@ -28,8 +23,9 @@ namespace BGE.Forms
 
         void Yaw(float angle)
         {
-            Quaternion rot = Quaternion.AngleAxis(angle, Vector3.up);
-            transform.rotation = rot * transform.rotation;
+            //Quaternion rot = Quaternion.AngleAxis(angle, Vector3.up);
+            //transform.rotation = rot * transform.rotation;
+            transform.Rotate(Vector3.up, angle, Space.World);
         }
 
         void Roll(float angle)
@@ -48,9 +44,11 @@ namespace BGE.Forms
             }
 
             // A pitch is a rotation around the right vector
-            Quaternion rot = Quaternion.AngleAxis(angle, transform.right);
+            //Quaternion rot = Quaternion.AngleAxis(angle, transform.right);
 
-            transform.rotation = rot * transform.rotation;
+            //transform.rotation = rot * transform.rotation;
+
+            transform.Rotate(Vector3.right, angle);
         }
 
         void Walk(float units)
@@ -73,6 +71,7 @@ namespace BGE.Forms
         void Update()
         {
             float mouseX, mouseY;
+            float speed = this.speed;
 
             float runAxis = 0; // Input.GetAxis("Run Axis");
 
@@ -83,16 +82,26 @@ namespace BGE.Forms
 
             if (Input.GetKey(KeyCode.LeftShift) || runAxis != 0)
             {
-                m_MoveSpeed *= 5.0f;
+                speed *= 5.0f;
             }
             
             if (Input.GetKey(KeyCode.E))
             {
-                Fly(Time.deltaTime * m_MoveSpeed);
+                Fly(Time.deltaTime * speed);
             }
             if (Input.GetKey(KeyCode.F))
             {
-                Fly(-Time.deltaTime * m_MoveSpeed);
+                Fly(-Time.deltaTime * speed);
+            }
+
+            if (Input.GetKey(KeyCode.Joystick1Button5))
+            {
+                Fly(speed * Time.deltaTime);
+            }
+
+            if (Input.GetKey(KeyCode.Joystick1Button4))
+            {
+                Fly(-speed * Time.deltaTime);
             }
 
 
@@ -101,19 +110,19 @@ namespace BGE.Forms
             mouseY = Input.GetAxis("Mouse Y");
             
 
-            Yaw(mouseX * m_MouseSpeed * Time.deltaTime);
-            Pitch(-mouseY * m_MouseSpeed * Time.deltaTime);
+            Yaw(mouseX * speed * Time.deltaTime);
+            Pitch(-mouseY * speed * Time.deltaTime);
 
             float joyX = Input.GetAxis("Joy X");
             float joyY = Input.GetAxis("Joy Y");
 
-            Yaw(joyX * m_MouseSpeed * Time.deltaTime);
-            Fly(-joyY * m_MouseSpeed * Time.deltaTime);
+            Yaw(joyX * speed * Time.deltaTime);
+            Fly(-joyY * speed * Time.deltaTime);
             
             float contWalk = Input.GetAxis("Vertical");
             float contStrafe = Input.GetAxis("Horizontal");
-            Walk(contWalk * m_MoveSpeed * Time.deltaTime);
-            Strafe(contStrafe * m_MoveSpeed * Time.deltaTime);
+            Walk(contWalk * speed * Time.deltaTime);
+            Strafe(contStrafe * speed * Time.deltaTime);
         }
     }
 }

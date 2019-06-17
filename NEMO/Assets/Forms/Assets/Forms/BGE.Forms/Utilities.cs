@@ -2,13 +2,53 @@
 using System;
 using System.Collections.Generic;
 
+public static class TransformExtensions
+{
+    public static Vector3 TransformPointUnscaled(this Transform transform, Vector3 position)
+    {
+        var localToWorldMatrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
+        return localToWorldMatrix.MultiplyPoint3x4(position);
+    }
+
+    public static Vector3 InverseTransformPointUnscaled(this Transform transform, Vector3 position)
+    {
+        var worldToLocalMatrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one).inverse;
+        return worldToLocalMatrix.MultiplyPoint3x4(position);
+    }
+}
+
 namespace BGE.Forms
 {
+    public enum BlendMode
+    {
+        Opaque,
+        Cutout,
+        Fade,
+        Transparent
+    }
+
     public class Utilities
     {
         public const float TWO_PI = Mathf.PI * 2.0f;
         
         private static System.Random Random = new System.Random(Guid.NewGuid().GetHashCode());
+
+        public static float StdDev(float[] vals)
+        {
+            float average = 0;
+            foreach (float v in vals)
+            {
+                average += v;
+            }
+            average /= (float)vals.Length;
+
+            float sumOfSquaresOfDifferences = 0;
+            foreach (float v in vals)
+            {
+                sumOfSquaresOfDifferences += ((v - average) * (v - average));
+            }
+            return Mathf.Sqrt(sumOfSquaresOfDifferences / (float) vals.Length);
+        }
 
         public static float RandomRange(System.Random r, float min, float max)
         {
@@ -47,9 +87,16 @@ namespace BGE.Forms
         public static Boid FindBoidInHierarchy(GameObject root, int startDepth = 0)
         {
             Boid boid = root.GetComponentInChildren<Boid>();
-            if (boid == null)
+            if (boid == null || boid.tag == "Player")
             {
-                return FindBoidInHierarchy(root.transform.parent.gameObject, startDepth ++);
+                if (root.transform.parent == null )
+                {
+                    return null;
+                }
+                else
+                {
+                    return FindBoidInHierarchy(root.transform.parent.gameObject, startDepth++);
+                }
             }
             else
             {
@@ -209,6 +256,11 @@ namespace BGE.Forms
             return p;
         }
 
+        static public float Manhatten(Vector3 a, Vector3 b)
+        {
+            return Mathf.Abs(a.x - b.x) + Mathf.Abs(a.z - b.z);
+        }
+
 
         static public bool checkNaN(ref Vector3 v, Vector3 def)
         {
@@ -289,6 +341,14 @@ namespace BGE.Forms
             }
             return list;
         }
+
+        public static void SetActive(SteeringBehaviour b, bool activate)
+        {
+            if (b != null)
+            {
+                b.SetActive(activate);
+            }
+        }
      
 
         public static void SetLayerRecursively(GameObject obj, int newLayer)
@@ -307,6 +367,49 @@ namespace BGE.Forms
                     continue;
                 }
                 SetLayerRecursively(child.gameObject, newLayer);
+            }
+        }
+
+        public static void SetupMaterialWithBlendMode(Material material, BlendMode blendMode)
+        {
+            switch (blendMode)
+            {
+                case BlendMode.Opaque:
+                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                    material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                    material.SetInt("_ZWrite", 1);
+                    material.DisableKeyword("_ALPHATEST_ON");
+                    material.DisableKeyword("_ALPHABLEND_ON");
+                    material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                    material.renderQueue = -1;
+                    break;
+                case BlendMode.Cutout:
+                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                    material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                    material.SetInt("_ZWrite", 1);
+                    material.EnableKeyword("_ALPHATEST_ON");
+                    material.DisableKeyword("_ALPHABLEND_ON");
+                    material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                    material.renderQueue = 2450;
+                    break;
+                case BlendMode.Fade:
+                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    material.SetInt("_ZWrite", 0);
+                    material.DisableKeyword("_ALPHATEST_ON");
+                    material.EnableKeyword("_ALPHABLEND_ON");
+                    material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                    material.renderQueue = 3000;
+                    break;
+                case BlendMode.Transparent:
+                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                    material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    material.SetInt("_ZWrite", 0);
+                    material.DisableKeyword("_ALPHATEST_ON");
+                    material.DisableKeyword("_ALPHABLEND_ON");
+                    material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                    material.renderQueue = 3000;
+                    break;
             }
         }
     }

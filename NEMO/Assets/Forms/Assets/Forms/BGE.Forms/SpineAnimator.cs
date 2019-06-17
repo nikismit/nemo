@@ -5,69 +5,44 @@ namespace BGE.Forms
 {
     public class SpineAnimator : MonoBehaviour {
 
+        public bool autoAssignBones = true;
+
         public enum AlignmentStrategy { LookAt, AlignToHead, LocalAlignToHead }
         public AlignmentStrategy alignmentStrategy = AlignmentStrategy.LookAt;
-        public bool autoAssignBones = true;    
 
         public List<GameObject> bones = new List<GameObject>();
+        public List<Transform> boneTransforms = new List<Transform>();
 
-        List<Vector3> bondOffsets = new List<Vector3>();
-        List<Quaternion> startRotations = new List<Quaternion>();
-
-        public List<JointParam> jointParams = new List<JointParam>();
-
+        public List<Vector3> offsets = new List<Vector3>();
+                
         public float bondDamping = 10;
         public float angularBondDamping = 12;
+        
+        public bool suspended = false;
 
-        [HideInInspector]
-        public Vector3 centerOfMass;
-        [HideInInspector]
-        public Quaternion averageRotation;
+        public Boid boid;
+        private float time = 0;
 
-        /*
-        public int updatesPerSecond = 60;
-        System.Collections.IEnumerator Animate()
-        {
-            while (true)
-            {
-                Transform prevFollower;
-                for (int i = 0; i < bones.Count; i++)
-                {
-                    if (i == 0)
-                    {
-                        prevFollower = this.transform;
-                    }
-                    else
-                    {
-                        prevFollower = bones[i - 1].transform;
-                    }
-
-                    Transform follower = bones[i].transform;
-
-                    DelayedMovement(prevFollower, follower, bondOffsets[i], i);
-                }
-                yield return new WaitForSeconds(1.0f / (float)updatesPerSecond);
-            }
-        }
-        */
+        public bool useSpineAnimatorSystem = true;
+        public int spineAnimatorSystemToUse = 0;
 
         void Start()
         {
             Transform prevFollower;
-            bondOffsets.Clear();
+            offsets.Clear();
 
             if (autoAssignBones)
             {
                 bones.Clear();
-                startRotations.Add(transform.rotation);
-                Transform parent = (transform.parent.childCount > 1) ? transform.parent : transform.parent.parent;
-                for (int i = 0; i < transform.parent.childCount; i++)
+                Transform parent;
+                parent = (transform.parent.childCount > 1) ? transform.parent : transform.parent.parent;
+                for (int i = 0; i < parent.childCount; i++)
                 {
-                    GameObject child = transform.parent.GetChild(i).gameObject;
+                    GameObject child = parent.GetChild(i).gameObject;
                     if (child != this.gameObject)
                     {
                         bones.Add(child);
-                        startRotations.Add(child.transform.rotation);
+                        boneTransforms.Add(child.transform);
                     }
                 }
             }
@@ -80,100 +55,90 @@ namespace BGE.Forms
                 }
                 else
                 {
-                    prevFollower = bones[i - 1].transform;
+                    prevFollower = boneTransforms[i - 1];
                 }
 
-                Transform follower = bones[i].transform;
+                Transform follower = boneTransforms[i];
                 Vector3 offset = follower.position - prevFollower.position;
-                offset = Quaternion.Inverse(prevFollower.transform.rotation) * offset;
-                bondOffsets.Add(offset);
-
+                offset = Quaternion.Inverse(prevFollower.rotation) * offset;
+                offsets.Add(offset);
             }
-            //StartCoroutine(Animate());
-        }
 
-        void Update()
-        {
-            Transform prevFollower;
-            for (int i = 0; i < bones.Count; i++)
+            boid = Utilities.FindBoidInHierarchy(this.gameObject);
+
+            if (useSpineAnimatorSystem)
             {
-                if (i == 0)
-                {
-                    prevFollower = this.transform;
-                }
-                else
-                {
-                    prevFollower = bones[i - 1].transform;
-                    // Must do this more beautifully.
-                    if (jointParams.Count > i)
-                    {
-                        JointParam jp = jointParams[i];
-                        if (jp.alignToHead)
-                        {
-                            prevFollower = this.transform;
-                        }
-                    }
-                }
-
-                Transform follower = bones[i].transform;
-
-                DelayedMovement(prevFollower, follower, bondOffsets[i], i);
+                SpineAnimatorManager.Instance.AddSpine(this, spineAnimatorSystemToUse);
             }
         }
-    
-        void DelayedMovement(Transform target, Transform follower, Vector3 bondOffset, int i)
-        {
-            float bondDamping;
-            float angularBondDamping;
 
-            if (jointParams.Count > i)
+        int skippedFrames = 0;
+        
+        
+        public void FixedUpdate()
+        {
+            if (useSpineAnimatorSystem)
             {
-                JointParam jp = jointParams[i];
-                bondDamping = jp.bondDamping;
-                angularBondDamping = jp.angularBondDamping;
+                return;
+            }
+            if (suspended)
+            {
+                return;
+            }
+            if (! boid.inFrontOfPlayer && boid.distanceToPlayer > 1000 && skippedFrames < 10)
+            {
+                skippedFrames++;
+                return;
+            }
+            if (skippedFrames == 10)
+            {
+                
+                skippedFrames = 0;
+                time = Time.deltaTime * 10.0f;
             }
             else
             {
-                bondDamping = this.bondDamping;
-                angularBondDamping = this.angularBondDamping;
+                time = Time.deltaTime;
             }
+            Transform previous;
+            for (int i = 0 ; i < bones.Count; i++)
+            {
+                if (i == 0)
+                {
+                    previous = this.transform;
+                }
+                else
+                {
+                    previous = boneTransforms[i - 1];
+                }
 
+                Transform current = boneTransforms[i];
+
+                DelayedMovement(previous, current, offsets[i], i);
+            }
+            
+        }
         
-            Vector3 wantedPosition = Utilities.TransformPointNoScale(bondOffset, target.transform);
-            follower.transform.position = Vector3.Lerp(follower.transform.position, wantedPosition, Time.deltaTime * bondDamping);
-
+    
+        void DelayedMovement(Transform previous, Transform current, Vector3 bondOffset, int i)
+        {
+            Vector3 wantedPosition = previous.TransformPointUnscaled(bondOffset);
+            Vector3 newPos = Vector3.Lerp(current.position, wantedPosition, time * bondDamping);
+            current.transform.position = newPos;
             Quaternion wantedRotation;
+            Quaternion newRotation = Quaternion.identity;
             switch (alignmentStrategy)
             {
 
                 case AlignmentStrategy.LookAt:
-                    wantedRotation = Quaternion.LookRotation(target.position - follower.transform.position, target.up);
-                    follower.transform.rotation = Quaternion.Slerp(follower.transform.rotation, wantedRotation, Time.deltaTime * angularBondDamping);
+                    wantedRotation = Quaternion.LookRotation(previous.position - newPos, previous.up);
+                    current.transform.rotation = Quaternion.Slerp(current.transform.rotation, wantedRotation, time * angularBondDamping);
                     break;
                 case AlignmentStrategy.AlignToHead:
-                    wantedRotation = target.transform.rotation;
-                    follower.transform.rotation = Quaternion.Slerp(follower.transform.rotation, wantedRotation, Time.deltaTime * angularBondDamping);
-                    break;
-                case AlignmentStrategy.LocalAlignToHead:
-                    wantedRotation = target.transform.localRotation;
-                    follower.transform.localRotation = Quaternion.Slerp(follower.transform.localRotation, wantedRotation, Time.deltaTime * angularBondDamping);
+                    wantedRotation = previous.transform.rotation;
+                    current.transform.rotation = Quaternion.Slerp(current.transform.rotation, wantedRotation, time * angularBondDamping);
                     break;
             }
-        }
-    }
-
-    [System.Serializable]
-    public class JointParam
-    {
-        public float bondDamping = 25;
-        public float angularBondDamping = 2;
-        public bool alignToHead = false;
-
-        public JointParam(float bondDamping, float angularBondDamping, bool alignToHead)
-        {
-            this.bondDamping = bondDamping;
-            this.angularBondDamping = angularBondDamping;
-            this.alignToHead = alignToHead;
         }
     }
 }

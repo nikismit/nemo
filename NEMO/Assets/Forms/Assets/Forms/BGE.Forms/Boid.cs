@@ -41,11 +41,11 @@ namespace BGE.Forms
         public bool tagNeighbours = false;
         public float tagNeighboursDither = 0.5f;
 
-        public float scaleUpAndDownForce = 1;
-
         public float bank;
 
         public float speed;
+
+        public float limitUpAndDown = 1.0f;
 
         [HideInInspector]
         public List<Boid> tagged = new List<Boid>();
@@ -73,7 +73,12 @@ namespace BGE.Forms
         [HideInInspector]
         public SteeringBehaviour[] behaviours;
 
-        public string testField;
+        public bool inFrontOfPlayer = false;
+        public float distanceToPlayer = 0;
+
+        [HideInInspector] Vector3 playerPosition;
+        [HideInInspector] Vector3 playerForward;
+        Transform player;
 
         public float TimeDelta
         {
@@ -84,8 +89,16 @@ namespace BGE.Forms
                 return timeDelta * flockMultiplier * timeMultiplier;
             }
         }
+
+        public void Awake()
+        {
+            player = GameObject.FindGameObjectWithTag("MainCamera").transform;
+            CreatureManager.Instance.boids.Add(this);
+        }
+
         void Start()
         {
+            multiThreaded = true;
             desiredPosition = transform.position;
             timeAcc = preferredTimeDelta;
             UpdateLocalFromTransform();
@@ -99,6 +112,7 @@ namespace BGE.Forms
 
         }
 
+    
         #region Integration
 
 
@@ -109,6 +123,9 @@ namespace BGE.Forms
             right = transform.right;
             forward = transform.forward;
             rotation = transform.rotation;
+
+            playerPosition = player.position;
+            playerForward = player.forward;
         }
 
         public Vector3 TransformDirection(Vector3 direction)
@@ -131,18 +148,72 @@ namespace BGE.Forms
         [HideInInspector]
         public float gravityAcceleration = 0;
 
-        void Update()
+        public bool autoSuspendWhenInvisible = false;
+
+        private Renderer renderer = null;
+        public bool isVisible()
         {
-            //return;
+            if (renderer == null)
+            {
+                renderer = GetComponent<Renderer>();
+                if (renderer == null)
+                {
+                    renderer = GetComponentInChildren<Renderer>();
+                }
+            }
+            return (renderer == null) ? false : renderer.isVisible;
+        }
+
+        public bool suspended = false;
+
+        float skippedFrames = 0;
+        public int toSkip = 10;
+        float time = 0;
+        void FixedUpdate()
+        {
+            playerPosition = player.position;
+            playerForward = player.forward;        
+            inFrontOfPlayer = Vector3.Dot(position - playerPosition, playerForward) > 0;
+            distanceToPlayer = Vector3.Distance(position, playerPosition);
+            if (autoSuspendWhenInvisible)
+            {
+                suspended = !inFrontOfPlayer;
+            }
+            if (suspended)
+            {
+                return;
+            }
+
+            if (!inFrontOfPlayer && distanceToPlayer > 1000 && skippedFrames < toSkip)
+            {
+                skippedFrames++;
+                return;
+            }
+            if (skippedFrames == 10)
+            {
+
+                skippedFrames = 0;
+                time = Time.deltaTime * 10.0f;
+            }
+            else
+            {
+                time = Time.deltaTime;
+            }
+
             float smoothRate;
+
+            if (school != null)
+            {
+                preferredTimeDelta = school.preferredTimeDelta;
+            }
 
             if (!multiThreaded)
             {
                 UpdateLocalFromTransform();
-                force = CalculateForce();
+                force = CalculateForce();                
             }
 
-            timeAcc += Time.deltaTime;
+            timeAcc += time;
 
             if (timeAcc > preferredTimeDelta)
             {
@@ -152,13 +223,10 @@ namespace BGE.Forms
                     timeAccMult *= school.timeMultiplier;
                 }
                 Vector3 newAcceleration = force / mass;
-
-                newAcceleration.y *= scaleUpAndDownForce;
-
                 if (timeAcc > 0.0f)
                 {
-                    smoothRate = Mathf.Clamp(9.0f * timeAccMult, 0.15f, 0.4f) / 2.0f;
-                    acceleration = Vector3.Lerp(acceleration, newAcceleration, smoothRate);
+                    smoothRate = Utilities.Clip(9.0f * timeAccMult, 0.15f, 0.4f) / 2.0f;
+                    Utilities.BlendIntoAccumulator(smoothRate, newAcceleration, ref acceleration);
                 }
 
                 if (applyGravity)
@@ -185,7 +253,7 @@ namespace BGE.Forms
                 // blend bankUp into vehicle's UP basis vector
                 smoothRate = timeAccMult;// * 3.0f;
                 Vector3 tempUp = transform.up;
-                tempUp = Vector3.Lerp(tempUp, bankUp, smoothRate);
+                Utilities.BlendIntoAccumulator(smoothRate, bankUp, ref tempUp);
 
                 speed = velocity.magnitude;
                 if (speed > maxSpeed)
@@ -198,7 +266,14 @@ namespace BGE.Forms
 
                 if (speed > 0.01f)
                 {
-                    transform.forward = Vector3.RotateTowards(transform.forward, velocity, Mathf.Deg2Rad * maxTurnDegrees * Time.deltaTime, float.MaxValue);
+                    if (preferredTimeDelta > 0)
+                    {
+                        transform.forward = velocity;
+                    }
+                    else
+                    {
+                        transform.forward = Vector3.RotateTowards(transform.forward, velocity, Mathf.Deg2Rad * maxTurnDegrees * Time.deltaTime, float.MaxValue);
+                    }
                     if (keepUpright)
                     {
                         Vector3 uprightForward = transform.forward;
@@ -222,11 +297,14 @@ namespace BGE.Forms
 
             if (preferredTimeDelta != 0.0f && integrateForces)
             {
+                /*
                 float timeDelta = Time.deltaTime * timeMultiplier;
                 timeDelta *= (school == null) ? 1 : school.timeMultiplier;
                 float dist = Vector3.Distance(transform.position, desiredPosition);
                 float distThisFrame = dist * (timeDelta / preferredTimeDelta);
-                transform.position = Vector3.MoveTowards(transform.position, desiredPosition, 50 * Time.deltaTime);
+                */
+                //transform.position = Vector3.MoveTowards(transform.position, desiredPosition, 50 * Time.deltaTime);
+                transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * 3);
             }
             else
             {
@@ -284,13 +362,17 @@ namespace BGE.Forms
                 }
             }
 
-
             // Calculate how much banking there is so that the fins can animate 
             Vector3 projectRight = right;
             projectRight.y = 0;
             projectRight.Normalize();
             bank = Vector3.Angle(right, projectRight);
             bank = (right.y > 0) ? bank : -bank;
+
+            // Calculate distance to the player
+
+            totalForce.y *= limitUpAndDown;
+
             return totalForce;
         }
         #endregion
@@ -338,9 +420,11 @@ namespace BGE.Forms
                 tagged.Clear();
 
                 float inRangeSq = inRange * inRange;
-                foreach (Boid boid in school.boids)
+                for(int i = 0; i <  school.boids.Count; i ++)
                 {
-                    if (boid != this)
+                    Boid boid = school.boids[i];
+                
+                    if (boid != this && ! boid.suspended)
                     {
                         if ((position - boid.position).sqrMagnitude < inRangeSq)
                         {

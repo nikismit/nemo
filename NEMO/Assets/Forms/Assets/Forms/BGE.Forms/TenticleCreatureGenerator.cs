@@ -8,6 +8,7 @@ namespace BGE.Forms
         public GameObject tenticlePrefab;
         public GameObject headPrefab;
 
+        public GameObject head;
 
         public int numTenticles = 8;
         public float radius = 20;
@@ -21,23 +22,21 @@ namespace BGE.Forms
 
         public void OnDrawGizmos()
         {
-            if (CreatureManager.drawGizmos)
+            List<CreaturePart> cps = CreateCreatureParams();
+            Gizmos.color = Color.cyan;
+            foreach (CreaturePart cp in cps)
             {
-                List<CreaturePart> cps = CreateCreatureParams();
-                Gizmos.color = Color.cyan;
-                foreach (CreaturePart cp in cps)
+                switch (cp.part)
                 {
-                    switch (cp.part)
-                    {
-                        case CreaturePart.Part.head:
-                            Gizmos.DrawWireSphere(cp.position, cp.size);
-                            break;
-                        case CreaturePart.Part.tenticle:
-                            Gizmos.DrawWireSphere(cp.position, cp.size / 10);
-                            break;
-                    }
+                    case CreaturePart.Part.head:
+                        Gizmos.DrawWireSphere(cp.position, cp.size);
+                        break;
+                    case CreaturePart.Part.tenticle:
+                        Gizmos.DrawWireSphere(cp.position, cp.size / 10);
+                        break;
                 }
             }
+
         }
 
         List<CreaturePart> CreateCreatureParams()
@@ -54,9 +53,11 @@ namespace BGE.Forms
             {
                 float theta = i * thetaInc;
                 Vector3 pos = new Vector3();
-                pos.x = transform.position.x + Mathf.Sin(theta) * radius;
-                pos.z = transform.position.z - Mathf.Cos(theta) * radius;
-                pos.y = transform.position.y;
+                pos.x = Mathf.Sin(theta) * radius;
+                pos.z = - Mathf.Cos(theta) * radius;
+                pos.y = 0;
+                pos += transform.position;
+
                 Quaternion q = Quaternion.identity;
                 q.eulerAngles = new Vector3(- tenticleAngle, Mathf.Rad2Deg * -theta, 0); // Quaternion.AngleAxis(Mathf.Rad2Deg * -theta, Vector3.up) * Quaternion.;
                 CreaturePart cp = new CreaturePart(pos, tenticleScale
@@ -72,6 +73,8 @@ namespace BGE.Forms
         {
             List<CreaturePart> parts = CreateCreatureParams();
             Boid boid = null;
+            GameObject temp = new GameObject();
+            temp.transform.position = transform.position;
             for(int i = 0; i < parts.Count; i ++)
             {
                 CreaturePart part = parts[i];
@@ -80,14 +83,15 @@ namespace BGE.Forms
                 newPart.transform.position = part.position;
                 newPart.transform.rotation = part.rotation;
                 newPart.transform.localScale = new Vector3(part.size, part.size, part.size);
-
-                newPart.transform.parent = transform;
+                
+                newPart.transform.parent = temp.transform;          
 
                 Boid thisBoid = newPart.GetComponentInChildren<Boid>();
                 if (thisBoid != null)
                 {
                     boid = thisBoid;
                     newPart.transform.parent = boid.transform.GetChild(0).transform;
+                    head = boid.gameObject;
                 }
 
                 FinAnimator anim = newPart.GetComponentInChildren<FinAnimator>();
@@ -98,6 +102,26 @@ namespace BGE.Forms
                 }
                 newPart.SetActive(true);
             }
+            // A hacky trick to rotate everything
+            temp.transform.Rotate(transform.rotation.eulerAngles);
+            temp.transform.parent = transform;
+
+            /*
+            for (int i = 0; i < temp.transform.childCount; i++)
+            {
+                temp.transform.GetChild(i).transform.parent = transform;
+            }
+            GameObject.Destroy(temp);
+            */
+
+
+
+
+            while(temp.transform.childCount > 0)
+            {
+                temp.transform.GetChild(0).transform.parent = transform;
+            }
+            GameObject.Destroy(temp);
         }
 
         void Awake()
@@ -123,3 +147,4 @@ namespace BGE.Forms
         }
     }
 }
+ 

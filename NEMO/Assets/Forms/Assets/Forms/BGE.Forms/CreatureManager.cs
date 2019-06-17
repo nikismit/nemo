@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Threading;
 using System.Text;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace BGE.Forms
 {
@@ -15,17 +15,16 @@ namespace BGE.Forms
         public static float threadTimeDelta;
 
         Thread thread;
-        public Boid[] boids;
+
+        [HideInInspector]
+        public List<Boid> boids = new List<Boid>();
 
         StringBuilder message = new StringBuilder();
 
-        public static CreatureManager Instance;
+        static CreatureManager instance;
 
         [Header("Debugging")]
         public bool showMessages;
-
-        public bool drawCreatureGizmos = true;
-        public static bool drawGizmos = true;
 
         void DisablePrefabs()
         {
@@ -38,7 +37,7 @@ namespace BGE.Forms
 
         public static void Log(string message)
         {
-            if (Instance != null)
+            if (instance != null)
             {
                 Instance.message.Append(message + "\n");
             }
@@ -46,7 +45,7 @@ namespace BGE.Forms
 
         public static void PrintFloat(string message, float f)
         {
-            if (Instance != null)
+            if (instance != null)
             {
                 Instance.message.Append(message + ": " + f + "\n");
             }
@@ -54,7 +53,7 @@ namespace BGE.Forms
 
         public static void PrintVector(string message, Vector3 v)
         {
-            if (Instance != null)
+            if (instance != null)
             {
                 Instance.message.Append(message + ": (" + v.x + ", " + v.y + ", " + v.z + ")\n");
             }
@@ -62,30 +61,30 @@ namespace BGE.Forms
 
         CreatureManager()
         {
-            Instance = this;
+            instance = this;
         }
 
         void OnGUI()
         {
             if (showMessages)
             {
-                GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "" + message, style);
-                if (Event.current.type == EventType.Repaint)
+                GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "" + message, style);                
+            }
+            if (Event.current.type == EventType.Repaint)
+            {
+                message.Length = 0;
+            }
+
+            if (Event.current.type == EventType.KeyDown)
+            {
+                if (Event.current.keyCode == KeyCode.F4)
                 {
-                    message.Length = 0;
+                    showMessages = !showMessages;
                 }
 
-                if (Event.current.type == EventType.KeyDown)
+                if (Event.current.keyCode == KeyCode.Escape)
                 {
-                    if (Event.current.keyCode == KeyCode.F4)
-                    {
-                        showMessages = !showMessages;
-                    }
-
-                    if (Event.current.keyCode == KeyCode.Escape)
-                    {
-                        Application.Quit();
-                    }
+                    Application.Quit();
                 }
             }
         }
@@ -96,13 +95,20 @@ namespace BGE.Forms
         float sumFPS = 0;
         int frameCount = 0;
 
+        public static CreatureManager Instance
+        {
+            get
+            {
+                return instance;
+            }
+        }
+
         void Awake()
         {
 
-            Instance = this;
+            instance = this;
             style.fontSize = 18;
             style.normal.textColor = Color.white;
-            //DontDestroyOnLoad(this);
             Cursor.visible = false;
 
             DisablePrefabs();
@@ -111,20 +117,20 @@ namespace BGE.Forms
         // Use this for initialization
         void Start ()
         {
-        
-            boids = FindObjectsOfType<Boid>(); // Find all the boids
+            /*
+            boids = new List<Boid>(FindObjectsOfType<Boid>()); // Find all the boids
             foreach (Boid boid in boids)
             {
                 boid.multiThreaded = true;
             }
-
+            */
             StartUpdateThreads();
         }
 
         void Update()
         {
-            drawGizmos = drawCreatureGizmos;
             frameCount++;
+            //threadTimeDelta = Time.deltaTime;
             float fps = (1.0f / Time.deltaTime);
             if (fps < minFPS)
             {
@@ -136,7 +142,6 @@ namespace BGE.Forms
             }
             sumFPS += fps;
             avgFPS = sumFPS / frameCount;
-            Log("Creatures: " + boids.Length);
             PrintFloat("FPS: ", (int)fps);
             PrintFloat("Avg FPS: ", (int)avgFPS);
             PrintFloat("Min FPS: ", (int)minFPS);
@@ -147,8 +152,8 @@ namespace BGE.Forms
                 StartUpdateThreads();
             }
             PrintFloat("Boid FPS: ", threadFPS);
-            PrintFloat("ThreadCount: ", (int)threadCount);
-            PrintFloat("Thread TimeDelta", threadTimeDelta);
+            Log("Num boids:" + boids.Count);
+            Log("Suspended boids:" + suspended);
 
             if (Input.GetKey(KeyCode.Escape))
             {
@@ -164,22 +169,37 @@ namespace BGE.Forms
         long lastThreadCount = 0;
         float threadFPS;
 
+        int suspended = 0;
+
         void UpdateThread()
         {
             float maxFPS = 100.0f;
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            
             while (running)
             {
                 stopwatch.Reset();
                 stopwatch.Start();
-
+                suspended = 0;
                 // Update all the boids
-                for (int i = 0; i < boids.Length; i++)
+                for (int i = 0; i < boids.Count; i++)
                 {
                     Boid boid = boids[i];
-                    boid.force = boid.CalculateForce();
+                    if (boid == null)
+                    {
+                        continue;
+                    }
+                    if (boid.suspended)
+                    {
+                        suspended++;
+                    }
+                    else
+                    {
+                        boid.force = boid.CalculateForce();
+                    }
                 }
                 stopwatch.Stop();
+                
                 threadTimeDelta = (float) ((double) stopwatch.ElapsedTicks / System.Diagnostics.Stopwatch.Frequency);
                 threadCount++;
                 if (threadTimeDelta < 0.01f)
@@ -191,19 +211,21 @@ namespace BGE.Forms
             }
         }
 
-        public bool running = false;
+        bool running = false;
 
         void OnApplicationQuit()
         {
             running = false;
         }
 
+
+
         void StartUpdateThreads()
         {
             running = true;
             Debug.Log("Starting thread...");
 
-            for (int i = 0; i < boids.Length; i++)
+            for (int i = 0; i < boids.Count; i++)
             {
                 Boid boid = boids[i];
                 boid.multiThreaded = true;

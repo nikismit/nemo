@@ -12,7 +12,7 @@ namespace BGE.Forms
             float originalSpeed = boid.maxSpeed;
             while (true)
             {
-                boid.maxSpeed = originalSpeed * Random.Range(0.8f, 1.2f);
+                //boid.maxSpeed = originalSpeed * Random.Range(0.5f, 1.5f);
                 yield return new WaitForSeconds(Random.Range(2, 4));
             }
         }

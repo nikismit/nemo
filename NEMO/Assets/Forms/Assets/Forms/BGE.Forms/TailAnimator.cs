@@ -20,10 +20,17 @@ namespace BGE.Forms
             theta = 0;
         }
 
-       // Update is called once per frame
+        private Renderer renderer = null;
+
+        // Update is called once per frame
         void Update()
         {
             if (boid == null) return;
+
+            if (suspended)
+            {
+                return;
+            }
 
             float angle = Mathf.Sin(theta) * amplitude;
             switch (axis)
