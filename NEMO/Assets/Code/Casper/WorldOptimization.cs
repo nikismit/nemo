@@ -24,7 +24,7 @@ public class WorldOptimization : MonoBehaviour
 		CM_Debug.Log("Optimization", "Turning activeGameObjectsOnStart on");
 		for (int i = 0; i < activeGameObjectsOnStart.Count; i++)
 		{
-			SetActive(activeGameObjectsOnStart[i]);
+			Activate(activeGameObjectsOnStart[i]);
 			SetActiveAllChildren(activeGameObjectsOnStart[i], true);
 		}
 
@@ -45,13 +45,20 @@ public class WorldOptimization : MonoBehaviour
 		SetActiveAllChildren(transform, false);
 	}
 
-	public void SetActive(Transform transform)
+	public void Activate(Transform transform)
 	{
+		SetActiveAllChildren(transform, true);
+
 		while (transform.name != this.transform.name)
 		{
 			transform.gameObject.SetActive(true);
 			transform = transform.parent;
 		}
+	}
+
+	public void Deactivate(Transform transform)
+	{
+		SetActiveAllChildren(transform, false);
 	}
 
 	private void SetActiveAllChildren(Transform transform, bool value)
