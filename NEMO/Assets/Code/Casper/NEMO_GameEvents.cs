@@ -14,6 +14,7 @@ public class NEMO_GameEvents : MonoBehaviour
 	public enum GameStates { WaitingForPlayer, Tutorial, Game, EndingGame, EndingCutscene };
 
 	// Current GameState
+	[SerializeField]
 	private GameStates _gameState = GameStates.WaitingForPlayer;
 	public GameStates GameState { get => _gameState; }
 
@@ -60,8 +61,8 @@ public class NEMO_GameEvents : MonoBehaviour
 
 	public void EndGame()
 	{
-		//if (_gameState != GameStates.EndingGame - 1)
-			//return;
+		if (_gameState == GameStates.WaitingForPlayer)
+			return;
 
 		_gameState = GameStates.EndingGame;
 		EndGameEvent.Invoke();
