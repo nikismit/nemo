@@ -6,10 +6,12 @@ public class SpeedMultiplierCheck : MonoBehaviour
 	public int calculations = 10;
 	public float multiplier = 2;
 	public float maxSpeedMultiplier = 3;
-	public float minBeltStrengthToActivate = 0.2f;
+	public float minBeltStrengthToActivateMultiplier = 0.9f;
+	public float minBeltStrengthToActivateUI = 0.98f;
 
 	[Header("Events")]
-	public GameEvent BadBreathingEvent;
+	public GameEvent BadBreathingMultiplierEvent;
+	public GameEvent BadBreathingUIEvent;
 
 	private float _averageMinValue = -1;
 	private float _averageMaxValue = -1;
@@ -42,17 +44,27 @@ public class SpeedMultiplierCheck : MonoBehaviour
 			CM_Debug.Log("SpeedMultiplierManager", "difference between average min and average max value: " + difference);
 
 			// Doing great
-			if (difference < minBeltStrengthToActivate)
+			if (difference < minBeltStrengthToActivateMultiplier)
 			{
 				CM_Debug.Log("SpeedMultiplierManager", "Breathing normally");
 				NemoPlayer2._instance.speedMultiplier = 1;
 				return;
 			}
 
+			// Doing so bad that I need a UI to show me how to breath correctly through my belly
+			if (difference > minBeltStrengthToActivateUI)
+			{
+				CM_Debug.Log("SpeedMultiplierManager", "Breathing incorrectly, need a UI");
+				BadBreathingUIEvent.Invoke();
+			}
+
 			// Doing bad, need a multiplier
-			CM_Debug.Log("SpeedMultiplierManager", "Breathing incorrectly, need a multiplier");
-			BadBreathingEvent.Invoke();
-			NemoPlayer2._instance.speedMultiplier = Mathf.Clamp(difference * multiplier, 1, maxSpeedMultiplier);
+			if (difference > minBeltStrengthToActivateMultiplier)
+			{
+				CM_Debug.Log("SpeedMultiplierManager", "Breathing incorrectly, need a multiplier");
+				BadBreathingMultiplierEvent.Invoke();
+				NemoPlayer2._instance.speedMultiplier = Mathf.Clamp(difference * multiplier, 1, maxSpeedMultiplier);
+			}
 		}
 	}
 

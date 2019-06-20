@@ -710,8 +710,12 @@ MonoBehaviour:
   calculations: 10
   multiplier: 2
   maxSpeedMultiplier: 3
-  minBeltStrengthToActivate: 0.95
-  BadBreathingEvent: {fileID: 11400000, guid: 033eb13c356a58544acea479d01db2fd, type: 2}
+  minBeltStrengthToActivateMultiplier: 0.9
+  minBeltStrengthToActivateUI: 0.98
+  BadBreathingMultiplierEvent: {fileID: 11400000, guid: 033eb13c356a58544acea479d01db2fd,
+    type: 2}
+  BadBreathingUIEvent: {fileID: 11400000, guid: 4f9f404127bbb7b459e82a7673de158a,
+    type: 2}
 --- !u!1 &4936180147959704960
 GameObject:
   m_ObjectHideFlags: 0
