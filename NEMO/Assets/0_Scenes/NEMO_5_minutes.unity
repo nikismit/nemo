@@ -32763,6 +32763,11 @@ PrefabInstance:
       propertyPath: eventManager
       value: 
       objectReference: {fileID: 1656084173}
+    - target: {fileID: 4936180147959704987, guid: 8836f2056b52dc54fb86c83d295a0af9,
+        type: 3}
+      propertyPath: ScaledDepthTexture.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4936180147959704989, guid: 8836f2056b52dc54fb86c83d295a0af9,
         type: 3}
       propertyPath: m_Enabled

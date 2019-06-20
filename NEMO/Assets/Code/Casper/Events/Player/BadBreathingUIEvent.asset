@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 17ec52e98f8540041a6a667d37046911, type: 3}
-  m_Name: BadBreathingEvent
+  m_Name: BadBreathingUIEvent
   m_EditorClassIdentifier: 

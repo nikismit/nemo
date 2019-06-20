@@ -14,7 +14,6 @@ public class NEMO_GameEvents : MonoBehaviour
 	public enum GameStates { WaitingForPlayer, Tutorial, Game, EndingGame, EndingCutscene };
 
 	// Current GameState
-	[SerializeField]
 	private GameStates _gameState = GameStates.WaitingForPlayer;
 	public GameStates GameState { get => _gameState; }
 
