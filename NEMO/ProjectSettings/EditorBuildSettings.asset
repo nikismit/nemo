@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/0_Scenes/NEMO_5_minutes.unity
+  - enabled: 0
+    path: Assets/0_Scenes/Visuals_screenshot scene.unity
     guid: 9366e4103f2137c45bac2b1363875467
+  - enabled: 1
+    path: Assets/0_Models/0_Scenes/NEMO_5_minutes.unity
+    guid: c97625988ba2e924eb00b944ad9eb7f0
   m_configObjects: {}
