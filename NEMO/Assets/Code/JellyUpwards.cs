@@ -11,6 +11,8 @@ public class JellyUpwards : MonoBehaviour
     [Header("Values")]
     public float minRandomMovUp = .1f, maxRandomMovUp = .5f, minShiver = -.5f, maxShiver = .5f;
 
+    public bool AutoUp = true;
+
     private bool GoUp;
 
     private float[] upFactor;
@@ -40,24 +42,24 @@ public class JellyUpwards : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            if (!GoUp)
-            {
-                GoUp = true;
-            }
-            else if (GoUp)
-            {
-                GoUp = false;
-            }
-        }
+        // if (Input.GetKeyDown(KeyCode.J))
+        // {
+        //     if (!GoUp)
+        //     {
+        //         GoUp = true;
+        //     }
+        //     else if (GoUp)
+        //     {
+        //         GoUp = false;
+        //     }
+        // }
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Reset();
-        }
+        // if (Input.GetKeyDown(KeyCode.R))
+        // {
+        //     Reset();
+        // }
 
-        if (GoUp)
+        if (GoUp || AutoUp)
         {
             JellyGoUp();
             JellyMoveHor();
