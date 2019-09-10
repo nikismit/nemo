@@ -84,17 +84,17 @@ public class JellyUpwards : MonoBehaviour
         }
     }
 
-    void Reset()
-    {
-        for (int i = 0; i < Jellies.Length; i++)
-        {
-            //JellyClumps[i].transform.position = startPos[i];
-            Jellies[i].transform.position = startPos[i];
-        }
-        CalculateUp();
-        CalculateShiver();
-        print("reset");
-    }
+    // void Reset()
+    // {
+    //     for (int i = 0; i < Jellies.Length; i++)
+    //     {
+    //         //JellyClumps[i].transform.position = startPos[i];
+    //         Jellies[i].transform.position = startPos[i];
+    //     }
+    //     CalculateUp();
+    //     CalculateShiver();
+    //     print("reset");
+    // }
 
     void CalculateUp()
     {
@@ -102,7 +102,7 @@ public class JellyUpwards : MonoBehaviour
         {
             upFactor[i] = Random.Range(minRandomMovUp, maxRandomMovUp);
         }
-        print("calculated upwards momentum");
+        //print("calculated upwards momentum");
     }
 
     void CalculateShiver()
@@ -111,6 +111,6 @@ public class JellyUpwards : MonoBehaviour
         {
             shiverFactor[i] = Random.Range(minShiver, maxShiver);
         }
-        print("calculated shiver momentum");
+        //print("calculated shiver momentum");
     }
 }
