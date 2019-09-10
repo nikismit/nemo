@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 6ef2d9ce13e26554eb6ce1e4cbe73979
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: TTRounds-Light
+  fontNames:
+  - TTRounds-Light
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 9415a5f9d0ef0634f83f884e0fc77d5e, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

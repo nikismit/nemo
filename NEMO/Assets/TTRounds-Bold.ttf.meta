@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 367122d7703f64f4d9c80269067c8cdd
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: TTRounds-Bold
+  fontNames:
+  - TTRounds-Bold
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: bc38250a875bf96458f06209ec3f136a, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
