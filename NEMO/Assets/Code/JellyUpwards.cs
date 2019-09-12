@@ -11,6 +11,8 @@ public class JellyUpwards : MonoBehaviour
     [Header("Values")]
     public float minRandomMovUp = .1f, maxRandomMovUp = .5f, minShiver = -.5f, maxShiver = .5f;
 
+    public bool AutoUp = true;
+
     private bool GoUp;
 
     private float[] upFactor;
@@ -40,24 +42,24 @@ public class JellyUpwards : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            if (!GoUp)
-            {
-                GoUp = true;
-            }
-            else if (GoUp)
-            {
-                GoUp = false;
-            }
-        }
+        // if (Input.GetKeyDown(KeyCode.J))
+        // {
+        //     if (!GoUp)
+        //     {
+        //         GoUp = true;
+        //     }
+        //     else if (GoUp)
+        //     {
+        //         GoUp = false;
+        //     }
+        // }
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Reset();
-        }
+        // if (Input.GetKeyDown(KeyCode.R))
+        // {
+        //     Reset();
+        // }
 
-        if (GoUp)
+        if (GoUp || AutoUp)
         {
             JellyGoUp();
             JellyMoveHor();
@@ -82,17 +84,17 @@ public class JellyUpwards : MonoBehaviour
         }
     }
 
-    void Reset()
-    {
-        for (int i = 0; i < Jellies.Length; i++)
-        {
-            //JellyClumps[i].transform.position = startPos[i];
-            Jellies[i].transform.position = startPos[i];
-        }
-        CalculateUp();
-        CalculateShiver();
-        print("reset");
-    }
+    // void Reset()
+    // {
+    //     for (int i = 0; i < Jellies.Length; i++)
+    //     {
+    //         //JellyClumps[i].transform.position = startPos[i];
+    //         Jellies[i].transform.position = startPos[i];
+    //     }
+    //     CalculateUp();
+    //     CalculateShiver();
+    //     print("reset");
+    // }
 
     void CalculateUp()
     {
@@ -100,7 +102,7 @@ public class JellyUpwards : MonoBehaviour
         {
             upFactor[i] = Random.Range(minRandomMovUp, maxRandomMovUp);
         }
-        print("calculated upwards momentum");
+        //print("calculated upwards momentum");
     }
 
     void CalculateShiver()
@@ -109,6 +111,6 @@ public class JellyUpwards : MonoBehaviour
         {
             shiverFactor[i] = Random.Range(minShiver, maxShiver);
         }
-        print("calculated shiver momentum");
+        //print("calculated shiver momentum");
     }
 }

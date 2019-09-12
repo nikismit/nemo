@@ -13,7 +13,7 @@ public class MutateMeshWithBreath : MonoBehaviour
 
     void Update()
     {
-        smr.SetBlendShapeWeight(0, 100 - (Output._instance.fullness * 100));
+        //smr.SetBlendShapeWeight(0, 100 - (Output._instance.fullness * 100));
     }
-	
+
 }

@@ -3,112 +3,116 @@ using UnityEngine;
 
 public class SpeedMultiplierCheck : MonoBehaviour
 {
-	public int calculations = 10;
-	public float multiplier = 2;
-	public float maxSpeedMultiplier = 3;
-	public float minBeltStrengthToActivateMultiplier = 0.9f;
-	public float minBeltStrengthToActivateUI = 0.98f;
+    public int calculations = 10;
+    public float multiplier = 2;
+    public float maxSpeedMultiplier = 3;
+    public float minBeltStrengthToActivateMultiplier = 0.9f;
+    public float minBeltStrengthToActivateUI = 0.98f;
 
-	[Header("Events")]
-	public GameEvent BadBreathingMultiplierEvent;
-	public GameEvent BadBreathingUIEvent;
+    [Header("Events")]
+    public GameEvent BadBreathingMultiplierEvent;
+    public GameEvent BadBreathingUIEvent;
 
-	private float _averageMinValue = -1;
-	private float _averageMaxValue = -1;
+    private float _averageMinValue = -1;
+    private float _averageMaxValue = -1;
 
-	private float[] _minValueList = new float[10];
-	private int _minValueListIndex = 0;
-	private float[] _maxValueList = new float[10];
-	private int _maxValueListIndex = 0;
+    private float[] _minValueList = new float[10];
+    private int _minValueListIndex = 0;
+    private float[] _maxValueList = new float[10];
+    private int _maxValueListIndex = 0;
 
-	private void Awake()
-	{
-		CM_Debug.AddCategory("SpeedMultiplierManager");
-	}
+    private float NewDiffernce;
 
-	private void Start()
-	{
-		_minValueList = new float[calculations];
-		_maxValueList = new float[calculations];
-	}
+    private void Awake()
+    {
+        CM_Debug.AddCategory("SpeedMultiplierManager");
+    }
 
-	private void MultiplierCheck()
-	{
-		if (_averageMinValue != -1 && _averageMaxValue != -1)
-		{
-			float difference = _averageMaxValue - _averageMinValue;
-			difference = 1 - difference;
+    private void Start()
+    {
+        _minValueList = new float[calculations];
+        _maxValueList = new float[calculations];
+    }
 
-			CM_Debug.Log("SpeedMultiplierManager", "Average max value: " + _averageMaxValue);
-			CM_Debug.Log("SpeedMultiplierManager", "Average min value: " + _averageMinValue);
-			CM_Debug.Log("SpeedMultiplierManager", "difference between average min and average max value: " + difference);
+    private void MultiplierCheck()
+    {
+        if (_averageMinValue != -1 && _averageMaxValue != -1)
+        {
+            float difference = _averageMaxValue - _averageMinValue;
+            difference = 1 - difference;
 
-			// Doing great
-			if (difference < minBeltStrengthToActivateMultiplier)
-			{
-				CM_Debug.Log("SpeedMultiplierManager", "Breathing normally");
-				NemoPlayer2._instance.speedMultiplier = 1;
-				return;
-			}
+            NewDiffernce = difference;
 
-			// Doing so bad that I need a UI to show me how to breath correctly through my belly
-			if (difference > minBeltStrengthToActivateUI)
-			{
-				CM_Debug.Log("SpeedMultiplierManager", "Breathing incorrectly, need a UI");
-				BadBreathingUIEvent.Invoke();
-			}
+            CM_Debug.Log("SpeedMultiplierManager", "Average max value: " + _averageMaxValue);
+            CM_Debug.Log("SpeedMultiplierManager", "Average min value: " + _averageMinValue);
+            CM_Debug.Log("SpeedMultiplierManager", "difference between average min and average max value: " + difference);
 
-			// Doing bad, need a multiplier
-			if (difference > minBeltStrengthToActivateMultiplier)
-			{
-				CM_Debug.Log("SpeedMultiplierManager", "Breathing incorrectly, need a multiplier");
-				BadBreathingMultiplierEvent.Invoke();
-				NemoPlayer2._instance.speedMultiplier = Mathf.Clamp(difference * multiplier, 1, maxSpeedMultiplier);
-			}
-		}
-	}
+            // Doing great
+            if (difference < minBeltStrengthToActivateMultiplier)
+            {
+                CM_Debug.Log("SpeedMultiplierManager", "Breathing normally");
+                NemoPlayer2._instance.speedMultiplier = 1;
+                return;
+            }
 
-	public void BreathingIn()
-	{
-		_maxValueList[_maxValueListIndex] = NemoPlayer2._instance.fullness;
-		CM_Debug.Log("SpeedMultiplierManager", "Current max value: " + NemoPlayer2._instance.fullness);
+            // Doing so bad that I need a UI to show me how to breath correctly through my belly
+            if (difference > minBeltStrengthToActivateUI)
+            {
+                CM_Debug.Log("SpeedMultiplierManager", "Breathing incorrectly, need a UI");
+                BadBreathingUIEvent.Invoke();
+            }
 
-		_maxValueListIndex++;
+            // Doing bad, need a multiplier
+            if (difference > minBeltStrengthToActivateMultiplier)
+            {
+                CM_Debug.Log("SpeedMultiplierManager", "Breathing incorrectly, need a multiplier");
+                BadBreathingMultiplierEvent.Invoke();
+                NemoPlayer2._instance.speedMultiplier = Mathf.Clamp(difference * multiplier, 1, maxSpeedMultiplier);
+            }
+        }
+    }
 
-		if (_maxValueListIndex >= _maxValueList.Length)
-		{
-			_maxValueListIndex = 0;
-			_averageMaxValue = GetAverage(_maxValueList);
-		}
-	}
+    public void BreathingIn()
+    {
+        _maxValueList[_maxValueListIndex] = NemoPlayer2._instance.fullness;
+        CM_Debug.Log("SpeedMultiplierManager", "Current max value: " + NemoPlayer2._instance.fullness);
 
-	public void BreathingOut()
-	{
-		_minValueList[_minValueListIndex] = NemoPlayer2._instance.fullness;
-		CM_Debug.Log("SpeedMultiplierManager", "Current min value: " + NemoPlayer2._instance.fullness);
+        _maxValueListIndex++;
 
-		_minValueListIndex++;
+        if (_maxValueListIndex >= _maxValueList.Length)
+        {
+            _maxValueListIndex = 0;
+            _averageMaxValue = GetAverage(_maxValueList);
+        }
+    }
 
-		if (_minValueListIndex >= _minValueList.Length)
-		{
-			_minValueListIndex = 0;
-			_averageMinValue = GetAverage(_minValueList);
-			MultiplierCheck();
-		}
-	}
+    public void BreathingOut()
+    {
+        _minValueList[_minValueListIndex] = NemoPlayer2._instance.fullness;
+        CM_Debug.Log("SpeedMultiplierManager", "Current min value: " + NemoPlayer2._instance.fullness);
 
-	public float GetAverage(float[] array)
-	{
-		float sum = 0;
-		float average = 0;
+        _minValueListIndex++;
 
-		for (var i = 0; i < array.Length; i++)
-		{
-			sum += array[i];
-		}
+        if (_minValueListIndex >= _minValueList.Length)
+        {
+            _minValueListIndex = 0;
+            _averageMinValue = GetAverage(_minValueList);
+            MultiplierCheck();
+        }
+    }
 
-		average = sum / array.Length;
+    public float GetAverage(float[] array)
+    {
+        float sum = 0;
+        float average = 0;
 
-		return average;
-	}
+        for (var i = 0; i < array.Length; i++)
+        {
+            sum += array[i];
+        }
+
+        average = sum / array.Length;
+
+        return average;
+    }
 }

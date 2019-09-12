@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:NEMO/Assets/0_Models/V_anemone_spots.fbm.meta
 guid: 244ce4490b714fa478fa5d8dd611eee5
+=======
+guid: 0712248b23fea304baf0c893f17d5084
+>>>>>>> b518074ab647d9360bb9ebf5237468f0356dac5f:NEMO/Assets/0_Models/V_anemone_spots.fbm.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
