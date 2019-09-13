@@ -53,7 +53,7 @@ public class JellyUpwards : MonoBehaviour
 
     void JellyGoUp()
     {
-        for (int i = 0; i < Jellies.Length; i++)
+        for (int i = 1; i < Jellies.Length; i++)
         {
             Jellies[i].transform.position += Vector3.up * Time.deltaTime * upFactor[i];
         }
@@ -61,7 +61,7 @@ public class JellyUpwards : MonoBehaviour
 
     void JellyMoveHor()
     {
-        for (int i = 0; i < Jellies.Length; i++)
+        for (int i = 1; i < Jellies.Length; i++)
         {
             Jellies[i].transform.position += Vector3.right * Time.deltaTime * shiverFactor[i];
         }
@@ -69,15 +69,15 @@ public class JellyUpwards : MonoBehaviour
 
     void JellyRotate()
     {
-        for (int i = 0; i < Jellies.Length; i++)
+        for (int i = 1; i < Jellies.Length; i++)
         {
-            Jellies[i].transform.Rotate(new Vector3(0, rotationFactor[i] * rotationSpeed, 0));
+            Jellies[i].transform.Rotate(new Vector3(0, 0, rotationFactor[i]) * rotationSpeed);
         }
     }
 
     void CalculateUp()
     {
-        for (int i = 0; i < Jellies.Length; i++)
+        for (int i = 1; i < Jellies.Length; i++)
         {
             upFactor[i] = Random.Range(minRandomMovUp, maxRandomMovUp);
         }
@@ -85,7 +85,7 @@ public class JellyUpwards : MonoBehaviour
 
     void CalculateShiver()
     {
-        for (int i = 0; i < Jellies.Length; i++)
+        for (int i = 1; i < Jellies.Length; i++)
         {
             shiverFactor[i] = Random.Range(minShiver, maxShiver);
         }
@@ -93,7 +93,7 @@ public class JellyUpwards : MonoBehaviour
 
     void CalculateRotation()
     {
-        for (int i = 0; i < Jellies.Length; i++)
+        for (int i = 1; i < Jellies.Length; i++)
         {
             rotationFactor[i] = Random.Range(-1f, 1f);
         }
