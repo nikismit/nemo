@@ -65,11 +65,16 @@ public class DMXControll : MonoBehaviour
 
     public Vector4 backColor;
     public Vector4 breathColor;
-    public float delaySpeed;
     public bool direction;
     public bool directionBreath;
     public AnimationCurve curver;
     public float delay = 0.2f;
+
+    public Vector2[] dmxSettings = new Vector2[6];
+    public Vector2[] dmxSettingsBack = new Vector2[6];
+    public bool simulate;
+    public float Timertje;
+    public float relVal;
 
     // Start is called before the first frame update
     void Start()
@@ -100,9 +105,43 @@ public class DMXControll : MonoBehaviour
             //{
             // updateDMX = false;
 
-            float minBrt = Helpers.minValueRange(breathData.breathLowPass,250);
-            float maxBrt = Helpers.maxValueRange(breathData.breathLowPass, 250);
+            float brtVal = 0;
+            float brtVal2 = 0;
+            float brtVal3 = 0;
+            float brtVal4 = 0;
+            float brtVal5 = 0;
+            float brtVal6 = 0;
 
+            float minBrt = -1;
+            float maxBrt = 1;
+            if (simulate) {
+                brtVal = Mathf.Sin(2 * Mathf.PI * Timertje * 0.4f);
+                brtVal2 = Mathf.Sin(2 * Mathf.PI * (Timertje+0.15f) * 0.4f);
+                brtVal3 = Mathf.Sin(2 * Mathf.PI * (Timertje + 0.3f) * 0.4f);
+                brtVal4 = Mathf.Sin(2 * Mathf.PI * (Timertje + 0.6f) * 0.4f);
+                brtVal5 = Mathf.Sin(2 * Mathf.PI * (Timertje + 0.75f) * 0.4f);
+                brtVal6 = Mathf.Sin(2 * Mathf.PI * (Timertje + 0.9f) * 0.4f);
+            }
+            else
+            {
+                  brtVal = breathData.breathLowPass[0];
+                  brtVal2 = breathData.breathLowPass[Mathf.RoundToInt(delay*25)];
+                  brtVal3 = breathData.breathLowPass[Mathf.RoundToInt(delay * 25 * 2)];
+                  brtVal4 = breathData.breathLowPass[Mathf.RoundToInt(delay * 25 * 3)];
+                  brtVal5 = breathData.breathLowPass[Mathf.RoundToInt(delay * 25 * 4)];
+                  brtVal6 = breathData.breathLowPass[Mathf.RoundToInt(delay * 25 * 5)];
+                
+              /*  brtVal2 = breathData.breathLowPass[0];
+                brtVal3 = breathData.breathLowPass[0];
+                brtVal4 = breathData.breathLowPass[0];
+                brtVal5 = breathData.breathLowPass[0];
+                brtVal6 = breathData.breathLowPass[0];
+                */
+                minBrt = Helpers.minValueRange(breathData.breathLowPass, 250);
+                maxBrt = Helpers.maxValueRange(breathData.breathLowPass, 250);
+            }
+
+            
             float newMin = 0;
             float newMax = 1;
             if (directionBreath)
@@ -110,59 +149,131 @@ public class DMXControll : MonoBehaviour
                 newMin = 1;
                 newMax = 0;
             }
-            float scaleBrt = Helpers.scale(minBrt, maxBrt, newMin, newMax, breathData.breathLowPass[0]);
+
+            float scaleBrt = Helpers.scale(minBrt, maxBrt, newMin, newMax, brtVal);
+            relVal = scaleBrt;
             scaleBrt *= curver.Evaluate(scaleBrt);
-            int delay1 = Mathf.RoundToInt(delay * 25);
-            float scaleBrt2 = Helpers.scale(minBrt, maxBrt, newMin, newMax, breathData.breathLowPass[delay1]);
+           
+            float scaleBrt2 = Helpers.scale(minBrt, maxBrt, newMin, newMax, brtVal2);
             scaleBrt2 *= curver.Evaluate(scaleBrt2);
-            int delay2 = Mathf.RoundToInt(delay * 2 * 25);
-            float scaleBrt3 = Helpers.scale(minBrt, maxBrt, newMin, newMax, breathData.breathLowPass[delay2]);
+           
+            float scaleBrt3 = Helpers.scale(minBrt, maxBrt, newMin, newMax, brtVal3);
             scaleBrt3 *= curver.Evaluate(scaleBrt3);
 
-            float brtLight1 = Mathf.Round(scaleBrt*255);
+            float scaleBrt4 = Helpers.scale(minBrt, maxBrt, newMin, newMax, brtVal4);
+            scaleBrt4 *= curver.Evaluate(scaleBrt3);
+
+            float scaleBrt5 = Helpers.scale(minBrt, maxBrt, newMin, newMax, brtVal5);
+            scaleBrt5 *= curver.Evaluate(scaleBrt5);
+
+            float scaleBrt6 = Helpers.scale(minBrt, maxBrt, newMin, newMax, brtVal6);
+            scaleBrt6 *= curver.Evaluate(scaleBrt6);
+
+           float brtLight1 = Mathf.Round(scaleBrt*255);
             float brtLight2 = Mathf.Round(scaleBrt2 * 255);
             float brtLight3 = Mathf.Round(scaleBrt3 * 255);
-
-            for (int i =0; i < 4; i++)
-            {
-                if (direction)
-                {
-                    DMXLevels[i] = (byte)brtLight1;
-                  
-                }
-                else
-                {
-                    DMXLevels[i] = (byte)brtLight3;
-                   
-                }
-              
-            }
-
+            float brtLight4 = Mathf.Round(scaleBrt4 * 255);
+            float brtLight5 = Mathf.Round(scaleBrt5 * 255);
+            float brtLight6 = Mathf.Round(scaleBrt6 * 255);
             
 
-            for (int i = 4; i < 8; i++)
-            {
-                DMXLevels[i] = (byte)brtLight2;
+            /*
+            float brtLight1 = Mathf.Round(scaleBrt * 255);
+            float brtLight2 = Mathf.Round(scaleBrt * 255);
+            float brtLight3 = Mathf.Round(scaleBrt * 255);
+            float brtLight4 = Mathf.Round(scaleBrt * 255);
+            float brtLight5 = Mathf.Round(scaleBrt * 255);
+            float brtLight6 = Mathf.Round(scaleBrt * 255);
+            */
+            //Front Left
 
-            }
-
-           
-
-            for (int i = 8; i < 12; i++)
-            {
-                if (direction)
-                {
-                    DMXLevels[i] = (byte)brtLight3;
-                   
-                }
-                else
+            if (direction) { 
+                for (int i = Mathf.RoundToInt(dmxSettings[0].x) ; i < Mathf.RoundToInt(dmxSettings[0].y); i++)
                 {
                     DMXLevels[i] = (byte)brtLight1;
-                  
-                }
-            }
 
-          
+                }
+
+                //Front Right
+                for (int i = Mathf.RoundToInt(dmxSettings[1].x); i < Mathf.RoundToInt(dmxSettings[1].y); i++)
+                {
+                    DMXLevels[i] = (byte)brtLight6;
+
+                }
+
+
+                //MidLeft
+                for (int i = Mathf.RoundToInt(dmxSettings[2].x); i < Mathf.RoundToInt(dmxSettings[2].y); i++)
+                {
+                    DMXLevels[i] = (byte)brtLight2;
+
+                }
+
+                //MidRight
+                for (int i = Mathf.RoundToInt(dmxSettings[3].x); i < Mathf.RoundToInt(dmxSettings[3].y); i++)
+                {
+                    DMXLevels[i] = (byte)brtLight5;
+
+                }
+
+
+                //BackLeft
+                for (int i = Mathf.RoundToInt(dmxSettings[4].x); i < Mathf.RoundToInt(dmxSettings[4].y); i++)
+                {
+                    DMXLevels[i] = (byte)brtLight3;
+                }
+
+                //BackRight
+                for (int i = Mathf.RoundToInt(dmxSettings[5].x); i < Mathf.RoundToInt(dmxSettings[5].y); i++)
+                {
+                    DMXLevels[i] = (byte)brtLight4;
+                }
+
+            }
+            else
+            {
+                for (int i = Mathf.RoundToInt(dmxSettingsBack[0].x); i < Mathf.RoundToInt(dmxSettingsBack[0].y); i++)
+                {
+                    DMXLevels[i] = (byte)brtLight1;
+
+                }
+
+                //Front Right
+                for (int i = Mathf.RoundToInt(dmxSettingsBack[1].x); i < Mathf.RoundToInt(dmxSettingsBack[1].y); i++)
+                {
+                    DMXLevels[i] = (byte)brtLight6;
+
+                }
+
+
+                //MidLeft
+                for (int i = Mathf.RoundToInt(dmxSettingsBack[2].x); i < Mathf.RoundToInt(dmxSettingsBack[2].y); i++)
+                {
+                    DMXLevels[i] = (byte)brtLight2;
+
+                }
+
+                //MidRight
+                for (int i = Mathf.RoundToInt(dmxSettingsBack[3].x); i < Mathf.RoundToInt(dmxSettingsBack[3].y); i++)
+                {
+                    DMXLevels[i] = (byte)brtLight5;
+
+                }
+
+
+                //BackLeft
+                for (int i = Mathf.RoundToInt(dmxSettingsBack[4].x); i < Mathf.RoundToInt(dmxSettingsBack[4].y); i++)
+                {
+                    DMXLevels[i] = (byte)brtLight3;
+                }
+
+                //BackRight
+                for (int i = Mathf.RoundToInt(dmxSettingsBack[5].x); i < Mathf.RoundToInt(dmxSettingsBack[5].y); i++)
+                {
+                    DMXLevels[i] = (byte)brtLight4;
+                }
+
+            }
 
 
             Buffer.BlockCopy(DMXLevels, 0, TxBuffer, DMX_PRO_DATA_INDEX_OFFSET, N_DMX_CHANNELS);
@@ -223,7 +334,7 @@ public class DMXControll : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        Timertje = Time.time;
     }
 
 
