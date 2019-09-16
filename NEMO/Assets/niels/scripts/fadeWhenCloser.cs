@@ -6,7 +6,7 @@ public class fadeWhenCloser : MonoBehaviour
 {
     public GameObject objectToWatch;
     public float triggerDistance = 10f;
-    public Color startColor = Color.black, newColor = new Color(1f, 1f, 1f, 0f);
+    private Color startColor, newColor = new Color(1f, 1f, 1f, 0f);
 
     private float distance;
     private SpriteRenderer sr;
@@ -20,7 +20,7 @@ public class fadeWhenCloser : MonoBehaviour
         }
 
         sr = GetComponent<SpriteRenderer>();
-        sr.color = startColor;
+        startColor = sr.color;
     }
 
     // Update is called once per frame
@@ -28,7 +28,7 @@ public class fadeWhenCloser : MonoBehaviour
     {
         distance = Vector3.Distance(transform.position, objectToWatch.transform.position);
 
-        if (distance < triggerDistance)
+        if (distance > triggerDistance)
         {
             sr.color = Color.Lerp(GetComponent<SpriteRenderer>().color, newColor, 0.1f);
         }
