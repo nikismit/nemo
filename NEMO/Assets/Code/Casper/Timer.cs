@@ -5,29 +5,43 @@ using UnityEngine.Events;
 
 public class Timer : MonoBehaviour
 {
-	public TimeData time;
+    public TimeData time;
 
-	public UnityEvent OnTimerFinished;
+    private IEnumerator co;
 
-	public void Execute()
-	{
-		StartCoroutine(Routine());
-	}
+    public UnityEvent OnTimerFinished;
 
-	public void Execute(TimeData time)
-	{
-		this.time = time;
-		Execute();
-	}
+    public void Execute()
+    {
+        co = Routine();
+        StartCoroutine(co);
+    }
 
-	private IEnumerator Routine()
-	{
-		yield return new WaitForSeconds(time.TotalSeconds);
-		TimerFinished();
-	}
+    public void Execute(TimeData time)
+    {
+        this.time = time;
+        Execute();
+    }
 
-	private void TimerFinished()
-	{
-		OnTimerFinished.Invoke();
-	}
+    private IEnumerator Routine()
+    {
+        Debug.Log("counting down from " + time.TotalSeconds);
+
+        yield return new WaitForSeconds(time.TotalSeconds);
+
+        Debug.Log("done counting from " + time.TotalSeconds + " going to invoke now");
+
+        TimerFinished();
+    }
+
+    private void TimerFinished()
+    {
+        OnTimerFinished.Invoke();
+    }
+
+    public void ResetTimer()
+    {
+        StopCoroutine(co);
+        Debug.Log("stopped coroutine " + gameObject.name + co.ToString() + " / / " + time.TotalSeconds);
+    }
 }
