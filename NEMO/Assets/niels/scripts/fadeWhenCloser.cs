@@ -16,7 +16,7 @@ public class fadeWhenCloser : MonoBehaviour
     {
         if (objectToWatch == null)
         {
-            print("forgot to put player in inspector");
+            objectToWatch = GameObject.Find("************************Player");
         }
 
         sr = GetComponent<SpriteRenderer>();

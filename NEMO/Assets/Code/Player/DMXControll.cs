@@ -9,6 +9,7 @@ using System;
 public class DMXControll : MonoBehaviour
 {
     public Analyser breathData;
+    public NemoController controller;
 
     private SerialPort DMXController = new SerialPort();
 
@@ -122,7 +123,30 @@ public class DMXControll : MonoBehaviour
                 brtVal5 = Mathf.Sin(2 * Mathf.PI * (Timertje + 0.75f) * 0.4f);
                 brtVal6 = Mathf.Sin(2 * Mathf.PI * (Timertje + 0.9f) * 0.4f);
             }
-            else
+
+            if(simulate == false && controller._isBeltConnected == false)
+            {
+                    if(directionBreath ==false){
+                    brtVal = -1;
+                    brtVal2 = -1;
+                    brtVal3 = -1;
+                    brtVal4 = -1;
+                    brtVal5 = -1;
+                    brtVal6 = -1;
+                    }
+
+                    if(directionBreath == true){
+                    brtVal = 1;
+                    brtVal2 = 1;
+                    brtVal3 = 1;
+                    brtVal4 = 1;
+                    brtVal5 = 1;
+                    brtVal6 = 1;
+                    }
+                   
+              
+            }
+            if(simulate == false && controller._isBeltConnected == true)
             {
                   brtVal = breathData.breathLowPass[0];
                   brtVal2 = breathData.breathLowPass[Mathf.RoundToInt(delay*25)];
@@ -138,9 +162,9 @@ public class DMXControll : MonoBehaviour
                 brtVal6 = breathData.breathLowPass[0];
                 */
                 minBrt = Helpers.minValueRange(breathData.breathLowPass, 250);
-                maxBrt = Helpers.maxValueRange(breathData.breathLowPass, 250);
+              maxBrt = Helpers.maxValueRange(breathData.breathLowPass, 250);
             }
-
+           
             
             float newMin = 0;
             float newMax = 1;
