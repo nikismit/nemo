@@ -83,6 +83,7 @@ public class SpeedMultiplierCheck : MonoBehaviour
         {
             _maxValueListIndex = 0;
             _averageMaxValue = GetAverage(_maxValueList);
+            
         }
     }
 
