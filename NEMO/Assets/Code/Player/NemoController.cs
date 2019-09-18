@@ -29,9 +29,9 @@ public class NemoController : MonoBehaviour
     public States breathForCheck = States.breathingIn;
     public float breathBuffer = 0.01f;          // buffer used to see if the player is breathing in or out
 
-
-
-
+    public bool normalBreathing;
+    public float breathOutTimer;
+    public float breathInTimer;
     delegate void toGetInput();
     toGetInput GetInput;
 
@@ -82,7 +82,9 @@ public class NemoController : MonoBehaviour
         if (!runThread)
             return;
 
-        value = GetValueFromBelt();
+        
+
+        value = GetValueFromBelt();;
         //text.text = "poop: " + value;
 
         // Belt is connected
@@ -215,6 +217,8 @@ public class NemoController : MonoBehaviour
             {
                 try
                 {
+
+                    
                     NemoControllerValueRaw = NemoControllerPort.ReadLine();
                 }
                 catch (System.Exception) { }

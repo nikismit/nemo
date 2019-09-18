@@ -124,7 +124,7 @@ public class DMXControll : MonoBehaviour
                 brtVal6 = Mathf.Sin(2 * Mathf.PI * (Timertje + 0.9f) * 0.4f);
             }
 
-            if(simulate == false && controller._isBeltConnected == false)
+            if(simulate == false && controller._isBeltConnected == false || controller.normalBreathing == false)
             {
                     if(directionBreath ==false){
                     brtVal = -1;
@@ -146,7 +146,7 @@ public class DMXControll : MonoBehaviour
                    
               
             }
-            if(simulate == false && controller._isBeltConnected == true)
+            if(simulate == false && controller._isBeltConnected == true  && controller.normalBreathing == true)
             {
                   brtVal = breathData.breathLowPass[0];
                   brtVal2 = breathData.breathLowPass[Mathf.RoundToInt(delay*25)];
