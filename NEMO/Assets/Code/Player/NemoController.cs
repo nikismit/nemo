@@ -53,7 +53,7 @@ public class NemoController : MonoBehaviour
     public GameEvent BeltConnectedEvent;            // Event that invokes on connecting the belt
     public GameEvent BeltDisconnectedEvent;         // Event that invokes on disconnecting the belt
 
-    private bool _isBeltConnected = false;
+    public bool _isBeltConnected = false;
     public int portSelect= 0;
     private IEnumerator TryConnect()
     {
