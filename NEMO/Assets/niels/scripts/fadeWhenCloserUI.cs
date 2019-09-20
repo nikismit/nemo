@@ -7,6 +7,7 @@ public class fadeWhenCloserUI : MonoBehaviour
 {
     public GameObject objectToWatch;
     public float triggerDistance = 20f, closeTriggerDistance = 10f;
+    public float fadeSpeed = 5f;
 
     private Color startColor, newColor = new Color(1f, 1f, 1f, 0f);
     private float distance;
@@ -35,11 +36,11 @@ public class fadeWhenCloserUI : MonoBehaviour
 
         if (distance > triggerDistance || distance < closeTriggerDistance)
         {
-            TMPT.color = Color.Lerp(GetComponent<TextMeshPro>().color, newColor, 0.1f);
+            TMPT.color = Color.Lerp(GetComponent<TextMeshPro>().color, newColor, fadeSpeed / 100);
         }
         else
         {
-            TMPT.color = Color.Lerp(GetComponent<TextMeshPro>().color, startColor, 0.1f);
+            TMPT.color = Color.Lerp(GetComponent<TextMeshPro>().color, startColor, fadeSpeed / 100);
         }
     }
 }
