@@ -34,94 +34,52 @@ public class JellyUpwardsAnimation : MonoBehaviour
         startPos = new Vector3[Amount];
         animator = new Animator[Amount];
 
-        for (int i = 0; i < Jellies.Length; i++)
+        for (int i = 1; i < Jellies.Length; i++)
         {
-            // CalculateUp();
-            // CalculateShiver();
-            // CalculateRotation();
-
-            Calculate();
+            Calculate(i);
             startPos[i] = Jellies[i].transform.position;
             animator[i] = Jellies[i].GetComponent<Animator>();
+            JellyMove(i);
         }
     }
 
-    void FixedUpdate()
+    void JellyMove(int i)
     {
-        if (GoUp || AutoUp)
+        if (rotationFactor[i] > 0)
         {
-            // JellyGoUp();
-            // JellyMoveHor();
-            // JellyRotate();
-            JellyMove();
+            animator[i].SetBool("rotate", true);
+        }
+        else
+        {
+            animator[i].SetBool("rotate", false);
+        }
+
+        if (shiverFactor[i] > 0)
+        {
+            animator[i].SetBool("shiver", true);
+        }
+        else
+        {
+            animator[i].SetBool("shiver", false);
+        }
+        if (upFactor[i] < .15f)
+        {
+            animator[i].SetInteger("up", 0);
+        }
+        else if (upFactor[i] < .175f)
+        {
+            animator[i].SetInteger("up", 1);
+        }
+        else
+        {
+            animator[i].SetInteger("up", 2);
         }
     }
 
-    void JellyMove()
+    void Calculate(int i)
     {
-        for (int i = 1; i < Jellies.Length; i++)
-        {
-            Jellies[i].transform.position += Vector3.up * Time.deltaTime * upFactor[i];
-            Jellies[i].transform.position += Vector3.right * Time.deltaTime * shiverFactor[i];
-            Jellies[i].transform.Rotate(new Vector3(0, 0, rotationFactor[i]) * rotationSpeed);
-        }
+        upFactor[i] = Random.Range(minRandomMovUp, maxRandomMovUp);
+        shiverFactor[i] = Random.Range(minShiver, maxShiver);
+        rotationFactor[i] = Random.Range(-1f, 1f);
     }
-
-    void Calculate()
-    {
-        for (int i = 1; i < Jellies.Length; i++)
-        {
-            upFactor[i] = Random.Range(minRandomMovUp, maxRandomMovUp);
-            shiverFactor[i] = Random.Range(minShiver, maxShiver);
-            rotationFactor[i] = Random.Range(-1f, 1f);
-        }
-    }
-
-    // void JellyGoUp()
-    // {
-    //     for (int i = 1; i < Jellies.Length; i++)
-    //     {
-    //         Jellies[i].transform.position += Vector3.up * Time.deltaTime * upFactor[i];
-    //     }
-    // }
-
-    // void JellyMoveHor()
-    // {
-    //     for (int i = 1; i < Jellies.Length; i++)
-    //     {
-    //         Jellies[i].transform.position += Vector3.right * Time.deltaTime * shiverFactor[i];
-    //     }
-    // }
-
-    // void JellyRotate()
-    // {
-    //     for (int i = 1; i < Jellies.Length; i++)
-    //     {
-    //         Jellies[i].transform.Rotate(new Vector3(0, 0, rotationFactor[i]) * rotationSpeed);
-    //     }
-    // }
-
-    // void CalculateUp()
-    // {
-    //     for (int i = 1; i < Jellies.Length; i++)
-    //     {
-    //         upFactor[i] = Random.Range(minRandomMovUp, maxRandomMovUp);
-    //     }
-    // }
-
-    // void CalculateShiver()
-    // {
-    //     for (int i = 1; i < Jellies.Length; i++)
-    //     {
-    //         shiverFactor[i] = Random.Range(minShiver, maxShiver);
-    //     }
-    // }
-
-    // void CalculateRotation()
-    // {
-    //     for (int i = 1; i < Jellies.Length; i++)
-    //     {
-    //         rotationFactor[i] = Random.Range(-1f, 1f);
-    //     }
-    // }
 }
