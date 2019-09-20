@@ -1,7 +1,13 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:NEMO/Assets/BeerScripts/SubSound.prefab.meta
 guid: abeebf708dab3a749b0a276be7889cbb
 PrefabImporter:
+=======
+guid: 7915c222c8806644bac3257bf61567b9
+NativeFormatImporter:
+>>>>>>> a0aa411a1e25f1812a68c8912205921188df2f29:NEMO/Assets/niels/anim/JellyRotate.anim.meta
   externalObjects: {}
+  mainObjectFileID: 7400000
   userData: 
   assetBundleName: 
   assetBundleVariant: 
