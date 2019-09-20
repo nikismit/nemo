@@ -45,7 +45,7 @@ public class SpeedMultiplierCheck : MonoBehaviour
             //not sure why you'd want to subtract the difference from 1, you already calculated the difference between the 2 averages in the line above, confuses me
             //is it to create a higher number, which is better accesible in the inspector, if so its reversed
 
-            //difference = 1 - difference; //outcommented by niels
+            difference = 1 - difference;
 
             NewDiffernce = difference;
 
