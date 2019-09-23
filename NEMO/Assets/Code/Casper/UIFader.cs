@@ -43,7 +43,7 @@ namespace CM.UI
             color.a = 1;
             _totalFadeTime = fadeInTime;
             FadeTo(color);
-            print(gameObject.name + " is fading in with colorcode: " + color);
+            // print(gameObject.name + " is fading in with colorcode: " + color);
             // FadeState = states.Fade_in;
         }
 
@@ -53,7 +53,7 @@ namespace CM.UI
             color.a = 0;
             _totalFadeTime = fadeOutTime;
             FadeTo(color);
-            print(gameObject.name + " is fading out with colorcode: " + color);
+            // print(gameObject.name + " is fading out with colorcode: " + color);
             // FadeState = states.Fade_out;
         }
 
