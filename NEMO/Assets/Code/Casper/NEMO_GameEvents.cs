@@ -10,7 +10,7 @@ public class NEMO_GameEvents : MonoBehaviour
     public GameEvent ResetGameEvent;
     public GameEvent EndCutsceneEvent;
     public GameEvent EndCutsceneFinishedEvent;
-    public GameEvent EndCutsceneBeltEvent;
+    public GameEvent WaitForBeltEvent;
 
     public enum GameStates { WaitingForPlayer, Tutorial, Game, EndingGame, EndingCutscene };
 
@@ -81,17 +81,6 @@ public class NEMO_GameEvents : MonoBehaviour
         CM_Debug.Log("NEMO GameEvents", "END CUTSCENE EVENT");
     }
 
-    public void EndCutsceneBelt()
-    {
-        if (_gameState != GameStates.Game)
-            return;
-
-        _gameState = GameStates.EndingCutscene;
-        EndCutsceneBeltEvent.Invoke();
-
-        CM_Debug.Log("NEMO GameEvents", "END CUTSCENE BELT EVENT");
-    }
-
     public void EndCutsceneFinished()
     {
         if (_gameState != GameStates.EndingCutscene)
@@ -101,5 +90,16 @@ public class NEMO_GameEvents : MonoBehaviour
         EndCutsceneFinishedEvent.Invoke();
 
         CM_Debug.Log("NEMO GameEvents", "END CUTSCENE FINISHED EVENT");
+    }
+
+    public void WaitForBelt()
+    {
+        if (_gameState != GameStates.EndingGame)
+            return;
+
+        _gameState = GameStates.EndingCutscene;
+        WaitForBeltEvent.Invoke();
+
+        CM_Debug.Log("NEMO GameEvents", "END CUTSCENE BELT EVENT");
     }
 }
