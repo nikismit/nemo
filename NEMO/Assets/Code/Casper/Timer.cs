@@ -25,11 +25,11 @@ public class Timer : MonoBehaviour
 
     private IEnumerator Routine()
     {
-        // Debug.Log("counting down from " + time.TotalSeconds);
+        Debug.Log("counting down from " + time.TotalSeconds);
 
         yield return new WaitForSeconds(time.TotalSeconds);
 
-        // Debug.Log("done counting from " + time.TotalSeconds + " going to invoke now");
+        Debug.Log("done counting from " + time.TotalSeconds + " going to invoke now");
 
         TimerFinished();
     }
