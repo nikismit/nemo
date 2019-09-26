@@ -11,13 +11,10 @@ public class Timer : MonoBehaviour
 
     public UnityEvent OnTimerFinished;
 
-    public void Start()
-    {
-        co = Routine();
-    }
-
     public void Execute()
     {
+        co = Routine();
+        StopCoroutine(co);
         StartCoroutine(co);
     }
 
@@ -45,6 +42,7 @@ public class Timer : MonoBehaviour
 
     public void ResetTimer()
     {
+        StopAllCoroutines();
         StopCoroutine(co);
         Debug.Log("stopped coroutine " + co + " game object: " + gameObject.name + " timer value " + time.TotalSeconds);
     }
