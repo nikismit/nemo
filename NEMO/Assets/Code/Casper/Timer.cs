@@ -11,17 +11,21 @@ public class Timer : MonoBehaviour
 
     public UnityEvent OnTimerFinished;
 
-    public void Execute()
+    public void Start()
     {
         co = Routine();
+    }
+
+    public void Execute()
+    {
         StartCoroutine(co);
     }
 
-    public void Execute(TimeData time)
-    {
-        this.time = time;
-        Execute();
-    }
+    // public void Execute(TimeData time)
+    // {
+    //     this.time = time;
+    //     Execute();
+    // }
 
     private IEnumerator Routine()
     {
@@ -39,9 +43,9 @@ public class Timer : MonoBehaviour
         OnTimerFinished.Invoke();
     }
 
-    // public void ResetTimer()
-    // {
-    //     StopCoroutine(co);
-    //     Debug.Log("stopped coroutine " + gameObject.name + co.ToString() + " / / " + time.TotalSeconds);
-    // }
+    public void ResetTimer()
+    {
+        StopCoroutine(co);
+        Debug.Log("stopped coroutine " + co + " game object: " + gameObject.name + " timer value " + time.TotalSeconds);
+    }
 }
