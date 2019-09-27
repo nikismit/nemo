@@ -28,15 +28,6 @@ public class FadeBetweenTwoImages : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (In)
-        {
-            FadeFirstInArray();
-        }
-        else
-        {
-            FadeSecondInArray();
-        }
-
         if (autoFade)
         {
             tempTimer -= Time.deltaTime;
@@ -53,12 +44,15 @@ public class FadeBetweenTwoImages : MonoBehaviour
                 tempTimer = TimeTillNext;
             }
         }
-    }
 
-    public void ResetValues()
-    {
-        In = true;
-        tempTimer = TimeTillNext;
+        if (In)
+        {
+            FadeFirstInArray();
+        }
+        else
+        {
+            FadeSecondInArray();
+        }
     }
 
     void FadeFirstInArray()
@@ -71,5 +65,18 @@ public class FadeBetweenTwoImages : MonoBehaviour
     {
         AllImages[0].color = Color.Lerp(AllImages[0].color, AlphaZero, FadeSpeed);
         AllImages[1].color = Color.Lerp(AllImages[1].color, AlphaUp, FadeSpeed);
+    }
+
+    public void ResetValues()
+    {
+        if (AllImages != null)
+        {
+            for (int i = 0; i < AllImages.Length; i++)
+            {
+                AllImages[i].color = Color.Lerp(AlphaUp, AlphaZero, 100);
+            }
+            In = true;
+            tempTimer = TimeTillNext;
+        }
     }
 }
