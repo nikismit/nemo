@@ -10,8 +10,9 @@ public class NEMO_GameEvents : MonoBehaviour
     public GameEvent ResetGameEvent;
     public GameEvent EndCutsceneEvent;
     public GameEvent EndCutsceneFinishedEvent;
-  
-    public enum GameStates { WaitingForPlayer, Tutorial, Game, EndingGame, EndingCutscene };
+    public GameEvent DisconnectBelt;
+
+    public enum GameStates { WaitingForPlayer, Tutorial, Game, EndingGame, EndingCutscene, WaitingDisconnectBelt };
 
     // Current GameState
     private GameStates _gameState = GameStates.WaitingForPlayer;
@@ -89,5 +90,16 @@ public class NEMO_GameEvents : MonoBehaviour
         EndCutsceneFinishedEvent.Invoke();
 
         CM_Debug.Log("NEMO GameEvents", "END CUTSCENE FINISHED EVENT");
+    }
+
+    public void WaitingForBelt()
+    {
+        if (_gameState != GameStates.WaitingForPlayer)
+            return;
+
+        _gameState = GameStates.WaitingDisconnectBelt;
+        DisconnectBelt.Invoke();
+
+        CM_Debug.Log("NEMO GameEvents", "WAITING TO DISCONNECT BELT");
     }
 }

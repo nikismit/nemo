@@ -30,7 +30,7 @@ public class Timer : MonoBehaviour
 
         yield return new WaitForSeconds(time.TotalSeconds);
 
-        Debug.Log("done counting from " + time.TotalSeconds + " going to invoke now");
+        Debug.Log("done counting from " + time.TotalSeconds + " going to invoke now. name: " + gameObject.name);
 
         TimerFinished();
     }
