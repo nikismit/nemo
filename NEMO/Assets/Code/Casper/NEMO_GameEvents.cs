@@ -53,15 +53,23 @@ public class NEMO_GameEvents : MonoBehaviour
 
     public void ResetGame()
     {
-        _gameState = GameStates.WaitingForPlayer;
-        ResetGameEvent.Invoke();
+        if (_gameState == GameStates.EndingCutscene)                                                                           //niels edit
+        {
+            CM_Debug.Log("NEMO GameEvents", "Tried to call ResetGameEvent, but can't because we're ending the game");           //niels edit
+            return;
+        }
+        else                                                                                                                    //niels edit
+        {
+            _gameState = GameStates.WaitingForPlayer;
+            ResetGameEvent.Invoke();
 
-        CM_Debug.Log("NEMO GameEvents", "RESET GAME EVENT");
+            CM_Debug.Log("NEMO GameEvents", "RESET GAME EVENT");
+        }
     }
 
     public void EndGame()
     {
-        if (_gameState == GameStates.WaitingForPlayer)
+        if (_gameState == GameStates.WaitingForPlayer || _gameState == GameStates.EndingCutscene)                               //niels edit
             return;
 
         _gameState = GameStates.EndingGame;
