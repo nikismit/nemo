@@ -19,6 +19,11 @@ public class JellyUpwardsImproved : MonoBehaviour
 
     private int Amount;
 
+    void OnEnable()
+    {
+        Reset();
+    }
+
     void Start()
     {
         Jellies = GetComponentsInChildren<Transform>();
@@ -60,5 +65,13 @@ public class JellyUpwardsImproved : MonoBehaviour
         upFactor[i] = Random.Range(minRandomMovUp, maxRandomMovUp);
         shiverFactor[i] = Random.Range(minShiver, maxShiver);
         rotationFactor[i] = Random.Range(-1f, 1f);
+    }
+
+    void Reset()
+    {
+        for (int i = 0; i < Jellies.Length; i++)
+        {
+            Jellies[i].transform.position = startPos[i];
+        }
     }
 }
