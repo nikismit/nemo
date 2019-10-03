@@ -40,6 +40,7 @@ public class NemoController : MonoBehaviour
     public string portName = "COM10";
     private SerialPort NemoControllerPort = new SerialPort();
     private bool runThread = false;
+
     private string contollerValue;
 
     public delegate void GameStartHandler();
@@ -82,7 +83,7 @@ public class NemoController : MonoBehaviour
         if (!runThread)
             return;
 
-        value = GetValueFromBelt(); ;
+        value = GetValueFromBelt(); 
         //text.text = "poop: " + value;
 
         // Belt is connected
