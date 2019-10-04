@@ -14,7 +14,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/0_Scenes/NEMO_Hardwarecompatible_V4.unity
     guid: 929da99d20a0ebf4cb070f8ba2062e2e
-  - enabled: 1
+  - enabled: 0
     path: Assets/0_Scenes/NEMO_Hardwarecompatible_V6.unity
     guid: cdc89179decf5c34a86d1a67cad408a8
+  - enabled: 1
+    path: Assets/0_Scenes/NEMO_Hardwarecompatible_V10.unity
+    guid: d51479a9e380f904a84d8905d36c4a49
   m_configObjects: {}
