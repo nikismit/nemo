@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/0_Scenes/NEMO_Hardwarecompatible_V11.unity
-    guid: a7ea610f163699f44aeb4bf4bdc25718
+    path: Assets/0_Scenes/NEMO_Hardwarecompatible_V12.unity
+    guid: c9555013927d44741a00bcb0f6ac55e1
   m_configObjects: {}
