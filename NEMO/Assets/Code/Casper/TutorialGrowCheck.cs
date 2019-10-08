@@ -39,13 +39,17 @@ public class TutorialGrowCheck : MonoBehaviour
             return;
         }
 
-        if (!_isRoutineRunning)
-        {
-            _counter = 0;
-            InvokeWrongEvent();
-            CM_Debug.Log("NEMO Tutorial", "COUNTER: " + _counter);
-            return;
-        }
+        /*niels edit
+            why check if the routine is running, you alreadyhave eveything you need with the grow routine (growing or not growing)
+        */
+
+        // if (!_isRoutineRunning)
+        // {
+        //     _counter = 0;
+        //     InvokeWrongEvent();
+        //     CM_Debug.Log("NEMO Tutorial", "COUNTER: " + _counter);
+        //     return;
+        // }
 
         _counter++;
         InvokeCorrectEvent();
@@ -64,13 +68,17 @@ public class TutorialGrowCheck : MonoBehaviour
             return;
         }
 
-        if (!_isRoutineRunning)
-        {
-            _counter = 0;
-            InvokeWrongEvent();
-            CM_Debug.Log("NEMO Tutorial", "COUNTER: " + _counter);
-            return;
-        }
+        /*niels edit           
+            why check if the routine is running, you alreadyhave eveything you need with the grow routine (growing or not growing)
+        */
+
+        // if (!_isRoutineRunning)
+        // {
+        //     _counter = 0;
+        //     InvokeWrongEvent();
+        //     CM_Debug.Log("NEMO Tutorial", "COUNTER: " + _counter);
+        //     return;
+        // }
 
         _counter++;
         InvokeCorrectEvent();
