@@ -50,16 +50,4 @@ public class ObjectScaler : MonoBehaviour
 
         transform.localScale = _startingScale * _scale;
     }
-
-    void Reset()
-    {
-        _timer = 0;
-        _scale = 0;
-        _isGrowing = false;
-    }
-
-    void OnDisable()
-    {
-        Reset();
-    }
 }
