@@ -27,6 +27,8 @@ public class fadeWhenCloserUI : MonoBehaviour
     public float rotateAngle;
     public float rotationSpeed = 1;
 
+    private bool isMoving;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -73,15 +75,16 @@ public class fadeWhenCloserUI : MonoBehaviour
             {
                 transform.position += new Vector3(0, 0, moveSpeed / 100);
                 transform.Rotate(new Vector3(0, 0, rotateAngle) * (rotationSpeed * Time.deltaTime));
-                // checkBool = true;
+                isMoving = true;
+            }
+            else if (isMoving && distance < startMoveDistance)
+            {
+                Debug.Log("aaa");
+                transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, objectToWatch.transform.position.z + startMoveDistance), 5 * Time.deltaTime);
+                transform.Rotate(new Vector3(0, 0, rotateAngle) * (rotationSpeed * Time.deltaTime));
             }
 
-            // if (distance < startMoveDistance && checkBool)
-            // {
-            //     transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, objectToWatch.transform.position.z + 1), 100);
-            // }
-
-            if (distance > triggerDistance + 5)
+            if (distance > triggerDistance + 10)
             {
                 goneThru = false;
                 gameObject.SetActive(false);
@@ -92,7 +95,6 @@ public class fadeWhenCloserUI : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        //Debug.Log(other.gameObject.name);
         if (other.gameObject == objectToWatch)
         {
             goneThru = true;
@@ -101,6 +103,7 @@ public class fadeWhenCloserUI : MonoBehaviour
 
     public void ResetTextMeshProPosition()
     {
+        isMoving = false;
         goneThru = false;
         transform.position = startPos;
         transform.rotation = startRot;
