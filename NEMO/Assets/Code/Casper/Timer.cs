@@ -14,14 +14,15 @@ public class Timer : MonoBehaviour
     public void Execute()
     {
         co = Routine();
+        StopCoroutine(co);
         StartCoroutine(co);
     }
 
-    public void Execute(TimeData time)
-    {
-        this.time = time;
-        Execute();
-    }
+    // public void Execute(TimeData time)
+    // {
+    //     this.time = time;
+    //     Execute();
+    // }
 
     private IEnumerator Routine()
     {
@@ -29,7 +30,7 @@ public class Timer : MonoBehaviour
 
         yield return new WaitForSeconds(time.TotalSeconds);
 
-        Debug.Log("done counting from " + time.TotalSeconds + " going to invoke now");
+        Debug.Log("done counting from " + time.TotalSeconds + " going to invoke now. name: " + gameObject.name);
 
         TimerFinished();
     }
@@ -41,7 +42,8 @@ public class Timer : MonoBehaviour
 
     public void ResetTimer()
     {
+        StopAllCoroutines();
         StopCoroutine(co);
-        Debug.Log("stopped coroutine " + gameObject.name + co.ToString() + " / / " + time.TotalSeconds);
+        Debug.Log("stopped coroutine " + co + " game object: " + gameObject.name + " timer value " + time.TotalSeconds);
     }
 }

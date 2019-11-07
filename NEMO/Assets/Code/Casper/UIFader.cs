@@ -21,10 +21,6 @@ namespace CM.UI
 
         public UnityEvent OnFadeFinish;
 
-        // public enum states { Fade_in, Fade_out, idle }
-
-        // public states FadeState = states.idle;
-
         private void Awake()
         {
             _image = GetComponent<Image>();
@@ -36,15 +32,12 @@ namespace CM.UI
             _isFading = true;
         }
 
-
         public void FadeIn()
         {
             Color color = _image.color;
             color.a = 1;
             _totalFadeTime = fadeInTime;
             FadeTo(color);
-            print(gameObject.name + " is fading in with colorcode: " + color);
-            // FadeState = states.Fade_in;
         }
 
         public void FadeOut()
@@ -53,8 +46,6 @@ namespace CM.UI
             color.a = 0;
             _totalFadeTime = fadeOutTime;
             FadeTo(color);
-            print(gameObject.name + " is fading out with colorcode: " + color);
-            // FadeState = states.Fade_out;
         }
 
         public void StopFade()
@@ -81,7 +72,6 @@ namespace CM.UI
                 else
                 {
                     OnFadeFinish.Invoke();
-                    // FadeState = states.idle;
                     _isFading = false;
                 }
             }

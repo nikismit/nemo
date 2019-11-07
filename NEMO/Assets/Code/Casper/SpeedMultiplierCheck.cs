@@ -16,11 +16,12 @@ public class SpeedMultiplierCheck : MonoBehaviour
     private float _averageMinValue = -1;
     private float _averageMaxValue = -1;
 
-    private float[] _minValueList = new float[10];
-    private int _minValueListIndex = 0;
-    private float[] _maxValueList = new float[10];
-    private int _maxValueListIndex = 0;
+    public float[] _minValueList = new float[10];
+    public  int _minValueListIndex = 0;
+    public  float[] _maxValueList = new float[10];
+    public  int _maxValueListIndex = 0;
 
+    public float difference;
     private float NewDiffernce;
 
     private void Awake()
@@ -36,15 +37,11 @@ public class SpeedMultiplierCheck : MonoBehaviour
 
     private void MultiplierCheck()
     {
-        if (_averageMinValue != -1 && _averageMaxValue != -1) //why watch on exact -1? the average is a float, why check an int? probably has to be < 0 or < 1, not too sure --niels
+        if (_averageMinValue != -1 && _averageMaxValue != -1)
         { 
-            float difference = _averageMaxValue - _averageMinValue;
+            difference = _averageMaxValue - _averageMinValue;
 
-            //niels
-            //not sure why you'd want to subtract the difference from 1, you already calculated the difference between the 2 averages in the line above, confuses me
-            //is it to create a higher number, which is better accesible in the inspector, if so its reversed
-
-            //difference = 1 - difference; //outcommented by niels
+            difference = 1 - difference;
 
             NewDiffernce = difference;
 
@@ -103,6 +100,7 @@ public class SpeedMultiplierCheck : MonoBehaviour
         {
             _minValueListIndex = 0;
             _averageMinValue = GetAverage(_minValueList);
+            
             MultiplierCheck();
         }
     }

@@ -37,6 +37,7 @@ public class NemoPlayer2 : MonoBehaviour
     public float backSpeed = 2f;
     public float speedMultiplier = 1f;
 
+    public float breathSpeedAdd = 1;
     private float speed = 2f;
 
     public bool backwardOrUp;
@@ -150,7 +151,20 @@ public class NemoPlayer2 : MonoBehaviour
                 // breathing out maybe 
                 breathState = States.breathingOut;
                 //diraction = -1;
-                speed = backSpeed * speedMultiplier;
+
+                /*
+                niels edit
+                
+                removed the speedmultiplier, dont want to have this anymore as of 7/10/19
+                 
+                the old speed calc:
+                speed = backSpeed * speedMultiplier ;//*(controller.breathInTimer*breathSpeedAdd); 
+
+                 */
+
+                speed = backSpeed;
+
+                //speed = 3;
             }
         }
         oldFullness = rawFullness;
@@ -181,7 +195,11 @@ public class NemoPlayer2 : MonoBehaviour
                 //BAS edit below
                 //Bas: When breathing in, movement smoothes to standstill (0). When breathing out it smoothes to backwards movement (-1)
                 //diraction = Mathf.Lerp(diraction, 1, Time.deltaTime * smoother);
+
+                //UIT VOOR VOORWAARDSE BEWEGING
                 diraction = Mathf.Lerp(diraction, 0.1f, Time.deltaTime * smoother);
+
+                // AAN VOOR GEEN VOORWAARDSE BEWEGING diraction = Mathf.Lerp(diraction, 0.0f, Time.deltaTime * smoother);
 
                 //BAS edit
                 //Changes the opacity of white border based on fullness
@@ -204,7 +222,7 @@ public class NemoPlayer2 : MonoBehaviour
 
             if (fulnessDelta == 0)
             {
-                diraction = Mathf.Lerp(diraction, 0, Time.deltaTime * smoother);
+                // diraction = Mathf.Lerp(diraction, 0, Time.deltaTime * smoother);
 
             }
         }
@@ -216,7 +234,7 @@ public class NemoPlayer2 : MonoBehaviour
         }
 
         // move the player
-        if (_canMove)
+        if (_canMove && controller.normalBreathing)
         {
             if (backwardOrUp)
             {

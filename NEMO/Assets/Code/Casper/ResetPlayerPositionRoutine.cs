@@ -13,6 +13,9 @@ public class ResetPlayerPositionRoutine : MonoBehaviour
 
 	private int _previousValue;
 
+	public float[] storeVals = new float[5];
+	public int checkSame;
+
 	private IEnumerator WaitForReset(float seconds)
 	{
 		_routineRunning = true;
@@ -21,8 +24,22 @@ public class ResetPlayerPositionRoutine : MonoBehaviour
 		{
 			yield return new WaitForSeconds(seconds);
 
-			if (nemoController.value == _previousValue)
+			checkSame = 0;
+			for(int i = storeVals.Length-1; i>0; i--){
+				if(storeVals[i] == nemoController.value){
+					checkSame +=1;
+					};
+				storeVals[i] = storeVals[i-1];
+				
+			}
+			storeVals[0]= nemoController.value;
+
+			/*if (nemoController.value == _previousValue)
 			{
+				eventManager.EndGame();
+				_routineRunning = false;
+			}*/
+			if( checkSame >=storeVals.Length-1){
 				eventManager.EndGame();
 				_routineRunning = false;
 			}

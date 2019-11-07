@@ -29,9 +29,9 @@ public class NemoController : MonoBehaviour
     public States breathForCheck = States.breathingIn;
     public float breathBuffer = 0.01f;          // buffer used to see if the player is breathing in or out
 
-
-
-
+    public bool normalBreathing;
+    public float breathOutTimer;
+    public float breathInTimer;
     delegate void toGetInput();
     toGetInput GetInput;
 
@@ -40,6 +40,7 @@ public class NemoController : MonoBehaviour
     public string portName = "COM10";
     private SerialPort NemoControllerPort = new SerialPort();
     private bool runThread = false;
+
     private string contollerValue;
 
     public delegate void GameStartHandler();
@@ -53,8 +54,8 @@ public class NemoController : MonoBehaviour
     public GameEvent BeltConnectedEvent;            // Event that invokes on connecting the belt
     public GameEvent BeltDisconnectedEvent;         // Event that invokes on disconnecting the belt
 
-    public bool _isBeltConnected = false;
-    public int portSelect= 0;
+    public bool _isBeltConnected;                   //niels removed false
+    public int portSelect = 0;
     private IEnumerator TryConnect()
     {
         while ((value == 666 || value == 0) && (!runThread))
@@ -64,13 +65,13 @@ public class NemoController : MonoBehaviour
         }
     }
 
-	private void Awake()
-	{
-		CM_Debug.AddCategory("NEMO Controller");
-	}
+    private void Awake()
+    {
+        CM_Debug.AddCategory("NEMO Controller");
+    }
 
-	// Start is called before the first frame update
-	void Start()
+    // Start is called before the first frame update
+    void Start()
     {
         StartCoroutine(TryConnect());
         //text.text = "poop";
@@ -82,7 +83,7 @@ public class NemoController : MonoBehaviour
         if (!runThread)
             return;
 
-        value = GetValueFromBelt();
+        value = GetValueFromBelt(); 
         //text.text = "poop: " + value;
 
         // Belt is connected
@@ -100,7 +101,7 @@ public class NemoController : MonoBehaviour
             _isBeltConnected = false;
             BeltDisconnectedEvent.Invoke();
 
-			CM_Debug.Log("NEMO Controller", "BELT DISCONNECTED");
+            CM_Debug.Log("NEMO Controller", "BELT DISCONNECTED");
         }
     }
 
@@ -108,8 +109,10 @@ public class NemoController : MonoBehaviour
     int GetValueFromBelt()
     {
         if (NemoControllerValueRaw.Contains("E"))
+        {
             parsed = NemoControllerValueRaw.Split(',');
-        //print(NemoControllerValueRaw);
+            //print(NemoControllerValueRaw);
+        }
         else
             parsed[1] = "666";
 
@@ -122,68 +125,68 @@ public class NemoController : MonoBehaviour
         bool found = false;
 
         string[] ports = SerialPort.GetPortNames();
-		CM_Debug.Log("NEMO Controller", ports.Length + " Com ports found");
+        CM_Debug.Log("NEMO Controller", ports.Length + " Com ports found");
 
         if (ports.Length == 0)
         {
-			// no controller found
-			CM_Debug.Log("NEMO Controller", "nothing found");
+            // no controller found
+            CM_Debug.Log("NEMO Controller", "nothing found");
         }
         else
         {
             //foreach (string port in ports)
             //{
-                try  // try to open a port, if it fails try the next
-                {
-                    NemoControllerPort.PortName = ports[portSelect];
-                    //NemoControllerPort.DtrEnable = false;
-                    NemoControllerPort.BaudRate = 115200;
-                    //NemoControllerPort.Parity = Parity.None;
-                    //NemoControllerPort.DataBits = 8;
-                    //NemoControllerPort.StopBits = StopBits.One;
-                    //NemoControllerPort.Handshake = Handshake.None;
-                    NemoControllerPort.ReadTimeout = 50; // breathing band should respond in 50 msec
-                    //NemoControllerPort.WriteTimeout = 50;
-                    //NemoControllerPort.NewLine = "\n";
-                    NemoControllerPort.Open();
-					//deepController.DtrEnable = true; // will not receive data without this
+            try  // try to open a port, if it fails try the next
+            {
+                NemoControllerPort.PortName = ports[portSelect];
+                //NemoControllerPort.DtrEnable = false;
+                NemoControllerPort.BaudRate = 115200;
+                //NemoControllerPort.Parity = Parity.None;
+                //NemoControllerPort.DataBits = 8;
+                //NemoControllerPort.StopBits = StopBits.One;
+                //NemoControllerPort.Handshake = Handshake.None;
+                NemoControllerPort.ReadTimeout = 50; // breathing band should respond in 50 msec
+                                                     //NemoControllerPort.WriteTimeout = 50;
+                                                     //NemoControllerPort.NewLine = "\n";
+                NemoControllerPort.Open();
+                //deepController.DtrEnable = true; // will not receive data without this
 
-					CM_Debug.Log("NEMO Controller", NemoControllerPort.PortName);
+                CM_Debug.Log("NEMO Controller", NemoControllerPort.PortName);
 
-					CM_Debug.Log("NEMO Controller", "Trying port: " + ports[portSelect] + " ");
+                CM_Debug.Log("NEMO Controller", "Trying port: " + ports[portSelect] + " ");
 
 
 
-                    for (int i = 0; i < 100; i++)
-                    {
-                        try
-                        {
-                            string message = NemoControllerPort.ReadLine();
-                            if (message.Length > 0)
-                            {
-								CM_Debug.Log("NEMO Controller", "Message recieved on " + NemoControllerPort.PortName);
-								CM_Debug.Log("NEMO Controller", "Controller is on " + portName);
-
-                                // we are good to go create thread for controller
-                                found = true;
-                                ControllerConnectedEvent.Invoke();		// Invoke the controller connected event
-                            }
-                        }
-                        catch (TimeoutException) { }
-                    }
-                }
-                catch
+                for (int i = 0; i < 100; i++)
                 {
                     try
                     {
-                        NemoControllerPort.Close();
-                        System.Threading.Thread.Sleep(1000);
-                    }
-                    catch { }
+                        string message = NemoControllerPort.ReadLine();
+                        if (message.Length > 0)
+                        {
+                            CM_Debug.Log("NEMO Controller", "Message recieved on " + NemoControllerPort.PortName);
+                            CM_Debug.Log("NEMO Controller", "Controller is on " + portName);
 
-                    //continue; // try next port
+                            // we are good to go create thread for controller
+                            found = true;
+                            ControllerConnectedEvent.Invoke();      // Invoke the controller connected event
+                        }
+                    }
+                    catch (TimeoutException) { }
                 }
-                // nothgin found
+            }
+            catch
+            {
+                try
+                {
+                    NemoControllerPort.Close();
+                    System.Threading.Thread.Sleep(1000);
+                }
+                catch { }
+
+                //continue; // try next port
+            }
+            // nothgin found
 
 
             //}
@@ -192,8 +195,8 @@ public class NemoController : MonoBehaviour
             {
                 portName = NemoControllerPort.PortName;
 
-				CM_Debug.Log("NEMO Controller", "Controller is detected on " + portName);
-				CM_Debug.Log("NEMO Controller", "is " + NemoControllerPort.PortName + " open: " + NemoControllerPort.IsOpen);
+                CM_Debug.Log("NEMO Controller", "Controller is detected on " + portName);
+                CM_Debug.Log("NEMO Controller", "is " + NemoControllerPort.PortName + " open: " + NemoControllerPort.IsOpen);
 
                 // creat the thread for the controller
                 runThread = true;
@@ -215,6 +218,8 @@ public class NemoController : MonoBehaviour
             {
                 try
                 {
+
+
                     NemoControllerValueRaw = NemoControllerPort.ReadLine();
                 }
                 catch (System.Exception) { }
