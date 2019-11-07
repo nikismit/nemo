@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-[RequireComponent(typeof(BoxCollider))]
 public class fadeWhenCloserUI : MonoBehaviour
 {
     public GameObject objectToWatch;
@@ -13,50 +12,39 @@ public class fadeWhenCloserUI : MonoBehaviour
     private Color startColor, newColor = new Color(1f, 1f, 1f, 0f);
     private float distance;
     private TMP_Text TMPT;
-    private bool goneThru;
 
-    private BoxCollider BC;
-
-    private Vector3 startPos;
-    private Quaternion startRot;
-
-    public float startMoveDistance = 5;
-    public float moveSpeed = 5f;
-    // private bool checkBool;
-
+    public float moveSpeed;
     public float rotateAngle;
-    public float rotationSpeed = 1;
+    public float rotateSpeed;
 
-    private bool isMoving;
+    private bool moving = false;
+
+    public float distanceDeactivate = 10;
 
     // Start is called before the first frame update
     void Start()
     {
-        startPos = transform.position;
-        startRot = transform.rotation;
+        transform.SetParent(objectToWatch.transform, true);
 
-        goneThru = false;
-
-        if (objectToWatch == null)
-        {
-            objectToWatch = GameObject.Find("************************Player");
-            if (objectToWatch == null)
-            {
-                Debug.Log("Can't find the searched object on " + gameObject.name + " script: " + this.name);
-            }
-        }
+        ResetTextMeshProPosition();
 
         TMPT = GetComponent<TextMeshPro>();
         startColor = TMPT.color;
-
-        BC = GetComponent<BoxCollider>();
-        BC.isTrigger = true;
     }
 
     // Update is called once per frame
     void Update()
     {
         distance = Vector3.Distance(transform.position, objectToWatch.transform.position);
+
+        if (moving)
+        {
+            transform.position += new Vector3(0, 0, moveSpeed);
+            if (distance < triggerDistance && distance > closeTriggerDistance)
+            {
+                transform.Rotate(new Vector3(0, 0, rotateAngle) * (rotateSpeed * Time.deltaTime));
+            }
+        }
 
         if (distance > triggerDistance || distance < closeTriggerDistance)
         {
@@ -69,43 +57,22 @@ public class fadeWhenCloserUI : MonoBehaviour
             TMPT.color = Color.Lerp(GetComponent<TextMeshPro>().color, startColor, fadeSpeed / 100);
         }
 
-        if (goneThru)
+        if (distance > triggerDistance + distanceDeactivate && moving)
         {
-            if (distance > startMoveDistance)
-            {
-                transform.position += new Vector3(0, 0, moveSpeed / 100);
-                transform.Rotate(new Vector3(0, 0, rotateAngle) * (rotationSpeed * Time.deltaTime));
-                isMoving = true;
-            }
-            else if (isMoving && distance < startMoveDistance)
-            {
-                Debug.Log("aaa");
-                transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, objectToWatch.transform.position.z + startMoveDistance), 5 * Time.deltaTime);
-                transform.Rotate(new Vector3(0, 0, rotateAngle) * (rotationSpeed * Time.deltaTime));
-            }
-
-            if (distance > triggerDistance + 10)
-            {
-                goneThru = false;
-                gameObject.SetActive(false);
-                ResetTextMeshProPosition();
-            }
-        }
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject == objectToWatch)
-        {
-            goneThru = true;
+            ResetTextMeshProPosition();
+            gameObject.SetActive(false);
         }
     }
 
     public void ResetTextMeshProPosition()
     {
-        isMoving = false;
-        goneThru = false;
-        transform.position = startPos;
-        transform.rotation = startRot;
+        moving = false;
+        transform.position = new Vector3(transform.position.x, transform.position.y, objectToWatch.transform.position.z - 1);
+        transform.rotation = Quaternion.identity;
+    }
+
+    public void StartMoving()
+    {
+        moving = true;
     }
 }
