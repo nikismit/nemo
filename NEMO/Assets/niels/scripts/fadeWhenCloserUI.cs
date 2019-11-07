@@ -12,21 +12,21 @@ public class fadeWhenCloserUI : MonoBehaviour
     private Color startColor, newColor = new Color(1f, 1f, 1f, 0f);
     private float distance;
     private TMP_Text TMPT;
-    private bool goneThru;
+
+    public float moveSpeed;
+    public float rotateAngle;
+    public float rotateSpeed;
+
+    private bool moving = false;
+
+    public float distanceDeactivate = 10;
 
     // Start is called before the first frame update
     void Start()
     {
-        goneThru = false;
+        transform.SetParent(objectToWatch.transform, true);
 
-        if (objectToWatch == null)
-        {
-            objectToWatch = GameObject.Find("************************Player");
-            if (objectToWatch == null)
-            {
-                Debug.Log("Can't find the searched object on " + gameObject.name + " script: " + this.name);
-            }
-        }
+        ResetTextMeshProPosition();
 
         TMPT = GetComponent<TextMeshPro>();
         startColor = TMPT.color;
@@ -37,19 +37,42 @@ public class fadeWhenCloserUI : MonoBehaviour
     {
         distance = Vector3.Distance(transform.position, objectToWatch.transform.position);
 
-        if (distance > triggerDistance && !goneThru || distance < closeTriggerDistance && !goneThru)
+        if (moving)
         {
+            transform.position += new Vector3(0, 0, moveSpeed);
+            if (distance < triggerDistance && distance > closeTriggerDistance)
+            {
+                transform.Rotate(new Vector3(0, 0, rotateAngle) * (rotateSpeed * Time.deltaTime));
+            }
+        }
+
+        if (distance > triggerDistance || distance < closeTriggerDistance)
+        {
+            //fade out
             TMPT.color = Color.Lerp(GetComponent<TextMeshPro>().color, newColor, fadeSpeed / 100);
         }
         else
         {
+            //fade in
             TMPT.color = Color.Lerp(GetComponent<TextMeshPro>().color, startColor, fadeSpeed / 100);
         }
 
-        if (TMPT.color.a == 0 && !goneThru)
+        if (distance > triggerDistance + distanceDeactivate && moving)
         {
-            goneThru = true;
+            ResetTextMeshProPosition();
             gameObject.SetActive(false);
         }
+    }
+
+    public void ResetTextMeshProPosition()
+    {
+        moving = false;
+        transform.position = new Vector3(transform.position.x, transform.position.y, objectToWatch.transform.position.z - 1);
+        transform.rotation = Quaternion.identity;
+    }
+
+    public void StartMoving()
+    {
+        moving = true;
     }
 }
