@@ -73,6 +73,10 @@ public class NemoPlayer2 : MonoBehaviour
     private float whiteBorderSmoothIn = 0.25f;
     private float whiteBorderSmoothOut = 2f;
 
+    public KeyCode inputKeyInc = KeyCode.UpArrow;
+    public KeyCode inputKeyDecr = KeyCode.DownArrow;
+    public Text fullnessDiffThresholdTxt;
+
     void Awake()
     {
         //singleton stuff
@@ -151,7 +155,7 @@ public class NemoPlayer2 : MonoBehaviour
                 // breathing out maybe 
                 breathState = States.breathingOut;
                 //diraction = -1;
-               speed = backSpeed * speedMultiplier ;//*(controller.breathInTimer*breathSpeedAdd);
+                speed = backSpeed * speedMultiplier;//*(controller.breathInTimer*breathSpeedAdd);
                 //speed = 3;
             }
         }
@@ -183,11 +187,11 @@ public class NemoPlayer2 : MonoBehaviour
                 //BAS edit below
                 //Bas: When breathing in, movement smoothes to standstill (0). When breathing out it smoothes to backwards movement (-1)
                 //diraction = Mathf.Lerp(diraction, 1, Time.deltaTime * smoother);
-                
+
                 //UIT VOOR VOORWAARDSE BEWEGING
                 diraction = Mathf.Lerp(diraction, 0.1f, Time.deltaTime * smoother);
 
-               // AAN VOOR GEEN VOORWAARDSE BEWEGING diraction = Mathf.Lerp(diraction, 0.0f, Time.deltaTime * smoother);
+                // AAN VOOR GEEN VOORWAARDSE BEWEGING diraction = Mathf.Lerp(diraction, 0.0f, Time.deltaTime * smoother);
 
                 //BAS edit
                 //Changes the opacity of white border based on fullness
@@ -210,7 +214,7 @@ public class NemoPlayer2 : MonoBehaviour
 
             if (fulnessDelta == 0)
             {
-               // diraction = Mathf.Lerp(diraction, 0, Time.deltaTime * smoother);
+                // diraction = Mathf.Lerp(diraction, 0, Time.deltaTime * smoother);
 
             }
         }
@@ -236,6 +240,23 @@ public class NemoPlayer2 : MonoBehaviour
         }
 
         fullness = CalculateFullness();
+
+        if (Input.GetKeyDown(inputKeyInc))
+        {
+            fullnessDiffThreshold++;
+        }
+        if (Input.GetKeyDown(inputKeyDecr))
+        {
+            fullnessDiffThreshold--;
+        }
+        if (Input.GetKey(inputKeyInc) || Input.GetKey(inputKeyDecr))
+        {
+            fullnessDiffThresholdTxt.text = "Threshold: " + fullnessDiffThreshold;
+        }
+        else
+        {
+            fullnessDiffThresholdTxt.text = "";
+        }
     }
 
     float CalculateFullness()
