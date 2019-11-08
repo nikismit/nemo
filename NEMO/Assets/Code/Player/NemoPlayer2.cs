@@ -73,6 +73,10 @@ public class NemoPlayer2 : MonoBehaviour
     private float whiteBorderSmoothIn = 0.25f;
     private float whiteBorderSmoothOut = 2f;
 
+    public KeyCode inputKeyInc = KeyCode.UpArrow;
+    public KeyCode inputKeyDecr = KeyCode.DownArrow;
+    public Text fullnessDiffThresholdTxt;
+
     void Awake()
     {
         //singleton stuff
@@ -248,6 +252,23 @@ public class NemoPlayer2 : MonoBehaviour
         }
 
         fullness = CalculateFullness();
+
+        if (Input.GetKeyDown(inputKeyInc))
+        {
+            fullnessDiffThreshold++;
+        }
+        if (Input.GetKeyDown(inputKeyDecr))
+        {
+            fullnessDiffThreshold--;
+        }
+        if (Input.GetKey(inputKeyInc) || Input.GetKey(inputKeyDecr))
+        {
+            fullnessDiffThresholdTxt.text = "Threshold: " + fullnessDiffThreshold;
+        }
+        else
+        {
+            fullnessDiffThresholdTxt.text = "";
+        }
     }
 
     float CalculateFullness()

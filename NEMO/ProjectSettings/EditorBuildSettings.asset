@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/0_Scenes/NEMO_Hardwarecompatible_V12.unity
     guid: c9555013927d44741a00bcb0f6ac55e1
+  - enabled: 1
+    path: Assets/0_Scenes/NEMO_Hardwarecompatible_V14.unity
+    guid: d965af160362bf7418c52762785fbbb6
   m_configObjects: {}
