@@ -121,7 +121,7 @@ Material:
     - _dsfs: 5.926746
     - _edgemultiplayer: 0.49
     - _emmision: 2.363974
-    - _gradientamount: 6
+    - _gradientamount: 2
     - _gradientamount_copy: 2.363974
     - _gradientamountwobl: 3.3
     - _gradientamountwobl_copy: 1.296207
@@ -165,10 +165,10 @@ Material:
     - _node_1126: {r: 1, g: 0.6470588, b: 0.6470588, a: 1}
     - _node_1468: {r: 0, g: 1, b: 0.08965514, a: 1}
     - _node_2213: {r: 0.02865483, g: 0.1580957, b: 0.7794118, a: 1}
-    - _node_2255: {r: 1, g: 0.58962256, b: 0.9046352, a: 1}
+    - _node_2255: {r: 1, g: 0.5518868, b: 0.582246, a: 0}
     - _node_2255_copy: {r: 1, g: 1, b: 1, a: 1}
     - _node_2255_copy_copy: {r: 0.9933063, g: 0.5147059, b: 1, a: 1}
-    - _node_2739: {r: 1, g: 0, b: 0.9591946, a: 1}
+    - _node_2739: {r: 1, g: 0.43867922, b: 0.77906734, a: 0}
     - _node_2739_copy: {r: 0, g: 0, b: 0, a: 0}
     - _node_2739_copy_copy: {r: 0, g: 1, b: 0.7517242, a: 1}
     - _node_3384: {r: 0.41911763, g: 0.41911763, b: 0.41911763, a: 1}
