@@ -83,7 +83,7 @@ public class NemoController : MonoBehaviour
         if (!runThread)
             return;
 
-        value = GetValueFromBelt(); 
+        value = GetValueFromBelt();
         //text.text = "poop: " + value;
 
         // Belt is connected

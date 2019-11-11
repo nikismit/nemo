@@ -214,11 +214,11 @@ public class DMXControll : MonoBehaviour
             if (direction) {
 
                 DMXLevels[0] = (byte)brtLight1;
-                DMXLevels[1] = (byte)brtLight2;
-                DMXLevels[2] = (byte)brtLight3;
-                DMXLevels[3] = (byte)brtLight4;
-                DMXLevels[4] = (byte)brtLight5;
-                DMXLevels[5] = (byte)brtLight6; 
+                DMXLevels[1] = (byte)brtLight1;//(byte)brtLight2;
+                DMXLevels[2] = (byte)brtLight1;//(byte)brtLight3;
+                DMXLevels[3] = (byte)brtLight1;//(byte)brtLight4;
+                DMXLevels[4] = (byte)brtLight1;//(byte)brtLight5;
+                DMXLevels[5] = (byte)brtLight1;//(byte)brtLight6; 
                 
                 /*for (int i = Mathf.RoundToInt(dmxSettings[0].x) ; i < Mathf.RoundToInt(dmxSettings[0].y); i++)
                 {
@@ -264,13 +264,19 @@ public class DMXControll : MonoBehaviour
             }
             else
             {
-                DMXLevels[0] = (byte)brtLight6;
+              /*  DMXLevels[0] = (byte)brtLight6;
                 DMXLevels[1] = (byte)brtLight5;
                 DMXLevels[2] = (byte)brtLight4;
                 DMXLevels[3] = (byte)brtLight3;
                 DMXLevels[4] = (byte)brtLight2;
                 DMXLevels[5] = (byte)brtLight1; 
-
+*/
+                DMXLevels[0] = (byte)brtLight1;
+                DMXLevels[1] = (byte)brtLight1;//(byte)brtLight2;
+                DMXLevels[2] = (byte)brtLight1;//(byte)brtLight3;
+                DMXLevels[3] = (byte)brtLight1;//(byte)brtLight4;
+                DMXLevels[4] = (byte)brtLight1;//(byte)brtLight5;
+                DMXLevels[5] = (byte)brtLight1;//(byte)brtLight6; 
                 /*
                 for (int i = Mathf.RoundToInt(dmxSettingsBack[0].x); i < Mathf.RoundToInt(dmxSettingsBack[0].y); i++)
                 {
