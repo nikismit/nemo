@@ -55,7 +55,7 @@ public class NemoController : MonoBehaviour
     public GameEvent BeltDisconnectedEvent;         // Event that invokes on disconnecting the belt
 
     public bool _isBeltConnected;                   //niels removed false
-    public int portSelect = 0;
+    public string portSelect = "COM5";
     private IEnumerator TryConnect()
     {
         while ((value == 666 || value == 0) && (!runThread))
@@ -138,7 +138,7 @@ public class NemoController : MonoBehaviour
             //{
             try  // try to open a port, if it fails try the next
             {
-                NemoControllerPort.PortName = ports[portSelect];
+                NemoControllerPort.PortName = portSelect;
                 //NemoControllerPort.DtrEnable = false;
                 NemoControllerPort.BaudRate = 115200;
                 //NemoControllerPort.Parity = Parity.None;
@@ -153,7 +153,7 @@ public class NemoController : MonoBehaviour
 
                 CM_Debug.Log("NEMO Controller", NemoControllerPort.PortName);
 
-                CM_Debug.Log("NEMO Controller", "Trying port: " + ports[portSelect] + " ");
+                CM_Debug.Log("NEMO Controller", "Trying port: " + portSelect + " ");
 
 
 

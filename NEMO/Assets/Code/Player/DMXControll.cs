@@ -13,7 +13,7 @@ public class DMXControll : MonoBehaviour
 
     private SerialPort DMXController = new SerialPort();
 
-    public int portNum = 1;
+    public string portNum = "COM4";
 
     private const int N_DMX_CHANNELS = 512;
     public int nChannels { get { return N_DMX_CHANNELS; } }
@@ -91,6 +91,10 @@ public class DMXControll : MonoBehaviour
 
         //Flag to send default DMX values
         // updateDMX = true;
+
+        //Example: "COM4" - does not work
+        string comport = File.ReadAllText(Application.dataPath + "/../COMDMX.txt");
+        print(comport);
     }
 
 
@@ -352,7 +356,7 @@ public class DMXControll : MonoBehaviour
         //ConnectToNemoController();
         string[] ports = SerialPort.GetPortNames();
 
-        Debug.Log(ports[portNum]);
+        //Debug.Log(ports[portNum]);
 
         if (DMXController != null)
         {
@@ -360,13 +364,13 @@ public class DMXControll : MonoBehaviour
             DMXController.Dispose();
         }
 
-        DMXController = new SerialPort(ports[portNum], 57600, Parity.None, 8, StopBits.One);
+        DMXController = new SerialPort(@"\\.\" + portNum);//, 57600, Parity.None, 8, StopBits.One);
 
         try
         {
             DMXController.Open();
             DMXController.ReadTimeout = 50;
-            Debug.Log("connecting:" + ports[portNum]);
+            Debug.Log("connecting:" + portNum);
             updateDMX = true;
         }
         catch (System.Exception e)
