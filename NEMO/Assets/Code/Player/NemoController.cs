@@ -37,7 +37,7 @@ public class NemoController : MonoBehaviour
 
     public Text text;
     // for the controller
-    public string portName = "COM10";
+    public string portName = "COM10";           //not using this anymore check line 80
     private SerialPort NemoControllerPort = new SerialPort();
     private bool runThread = false;
 
@@ -55,7 +55,13 @@ public class NemoController : MonoBehaviour
     public GameEvent BeltDisconnectedEvent;         // Event that invokes on disconnecting the belt
 
     public bool _isBeltConnected;                   //niels removed false
-    public string portSelect = "COM5";
+    public string portSelect = "COM5";              //not using this anymore, check line 80
+
+    private string comport;
+
+    public string COMPORTLocation = "C:/Users/_Beheerder/MONOBANDA/Com_ports/COMAIO_Belt.txt";
+
+
     private IEnumerator TryConnect()
     {
         while ((value == 666 || value == 0) && (!runThread))
@@ -73,6 +79,11 @@ public class NemoController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Example: "COM4" - does not work
+        comport = File.ReadAllText(COMPORTLocation);
+
+        print("AIO will operate at " + comport); 
+
         StartCoroutine(TryConnect());
         //text.text = "poop";
     }
@@ -138,7 +149,7 @@ public class NemoController : MonoBehaviour
             //{
             try  // try to open a port, if it fails try the next
             {
-                NemoControllerPort.PortName = portSelect;
+                NemoControllerPort.PortName = comport;
                 //NemoControllerPort.DtrEnable = false;
                 NemoControllerPort.BaudRate = 115200;
                 //NemoControllerPort.Parity = Parity.None;

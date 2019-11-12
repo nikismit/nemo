@@ -77,9 +77,18 @@ public class DMXControll : MonoBehaviour
     public float Timertje;
     public float relVal;
 
+    private string comport;
+
+    public string COMPORTLocation = "C:/Users/_Beheerder/MONOBANDA/Com_ports/COMDMX_Lights.txt";
+
     // Start is called before the first frame update
     void Start()
     {
+        //Example: "COM4" - does not work
+        // string comport = File.ReadAllText(Application.dataPath + "/../COMDMX.txt");
+        comport = File.ReadAllText(COMPORTLocation);
+
+        print("DMX will operate at " + comport);
 
         OpenSerialPort();
         //Init the TX Buffer
@@ -92,9 +101,7 @@ public class DMXControll : MonoBehaviour
         //Flag to send default DMX values
         // updateDMX = true;
 
-        //Example: "COM4" - does not work
-        string comport = File.ReadAllText(Application.dataPath + "/../COMDMX.txt");
-        print(comport);
+
     }
 
 
@@ -119,57 +126,60 @@ public class DMXControll : MonoBehaviour
 
             float minBrt = -1;
             float maxBrt = 1;
-            if (simulate) {
+            if (simulate)
+            {
                 brtVal = Mathf.Sin(2 * Mathf.PI * Timertje * 0.4f);
-                brtVal2 = Mathf.Sin(2 * Mathf.PI * (Timertje+0.15f) * 0.4f);
+                brtVal2 = Mathf.Sin(2 * Mathf.PI * (Timertje + 0.15f) * 0.4f);
                 brtVal3 = Mathf.Sin(2 * Mathf.PI * (Timertje + 0.3f) * 0.4f);
                 brtVal4 = Mathf.Sin(2 * Mathf.PI * (Timertje + 0.6f) * 0.4f);
                 brtVal5 = Mathf.Sin(2 * Mathf.PI * (Timertje + 0.75f) * 0.4f);
                 brtVal6 = Mathf.Sin(2 * Mathf.PI * (Timertje + 0.9f) * 0.4f);
             }
 
-            if(simulate == false && controller._isBeltConnected == false || controller.normalBreathing == false)
+            if (simulate == false && controller._isBeltConnected == false || controller.normalBreathing == false)
             {
-                    if(directionBreath ==false){
+                if (directionBreath == false)
+                {
                     brtVal = -1;
                     brtVal2 = -1;
                     brtVal3 = -1;
                     brtVal4 = -1;
                     brtVal5 = -1;
                     brtVal6 = -1;
-                    }
+                }
 
-                    if(directionBreath == true){
+                if (directionBreath == true)
+                {
                     brtVal = 1;
                     brtVal2 = 1;
                     brtVal3 = 1;
                     brtVal4 = 1;
                     brtVal5 = 1;
                     brtVal6 = 1;
-                    }
-                   
-              
+                }
+
+
             }
-            if(simulate == false && controller._isBeltConnected == true  && controller.normalBreathing == true)
+            if (simulate == false && controller._isBeltConnected == true && controller.normalBreathing == true)
             {
-                  brtVal = breathData.breathLowPass[0];
-                  brtVal2 = breathData.breathLowPass[Mathf.RoundToInt(delay*25)];
-                  brtVal3 = breathData.breathLowPass[Mathf.RoundToInt(delay * 25 * 2)];
-                  brtVal4 = breathData.breathLowPass[Mathf.RoundToInt(delay * 25 * 3)];
-                  brtVal5 = breathData.breathLowPass[Mathf.RoundToInt(delay * 25 * 4)];
-                  brtVal6 = breathData.breathLowPass[Mathf.RoundToInt(delay * 25 * 5)];
-                
-              /*  brtVal2 = breathData.breathLowPass[0];
-                brtVal3 = breathData.breathLowPass[0];
-                brtVal4 = breathData.breathLowPass[0];
-                brtVal5 = breathData.breathLowPass[0];
-                brtVal6 = breathData.breathLowPass[0];
-                */
+                brtVal = breathData.breathLowPass[0];
+                brtVal2 = breathData.breathLowPass[Mathf.RoundToInt(delay * 25)];
+                brtVal3 = breathData.breathLowPass[Mathf.RoundToInt(delay * 25 * 2)];
+                brtVal4 = breathData.breathLowPass[Mathf.RoundToInt(delay * 25 * 3)];
+                brtVal5 = breathData.breathLowPass[Mathf.RoundToInt(delay * 25 * 4)];
+                brtVal6 = breathData.breathLowPass[Mathf.RoundToInt(delay * 25 * 5)];
+
+                /*  brtVal2 = breathData.breathLowPass[0];
+                  brtVal3 = breathData.breathLowPass[0];
+                  brtVal4 = breathData.breathLowPass[0];
+                  brtVal5 = breathData.breathLowPass[0];
+                  brtVal6 = breathData.breathLowPass[0];
+                  */
                 minBrt = Helpers.minValueRange(breathData.breathLowPass, 250);
-              maxBrt = Helpers.maxValueRange(breathData.breathLowPass, 250);
+                maxBrt = Helpers.maxValueRange(breathData.breathLowPass, 250);
             }
-           
-            
+
+
             float newMin = 0;
             float newMax = 1;
             if (directionBreath)
@@ -181,10 +191,10 @@ public class DMXControll : MonoBehaviour
             float scaleBrt = Helpers.scale(minBrt, maxBrt, newMin, newMax, brtVal);
             relVal = scaleBrt;
             scaleBrt *= curver.Evaluate(scaleBrt);
-           
+
             float scaleBrt2 = Helpers.scale(minBrt, maxBrt, newMin, newMax, brtVal2);
             scaleBrt2 *= curver.Evaluate(scaleBrt2);
-           
+
             float scaleBrt3 = Helpers.scale(minBrt, maxBrt, newMin, newMax, brtVal3);
             scaleBrt3 *= curver.Evaluate(scaleBrt3);
 
@@ -197,13 +207,13 @@ public class DMXControll : MonoBehaviour
             float scaleBrt6 = Helpers.scale(minBrt, maxBrt, newMin, newMax, brtVal6);
             scaleBrt6 *= curver.Evaluate(scaleBrt6);
 
-           float brtLight1 = Mathf.Round(scaleBrt*255);
+            float brtLight1 = Mathf.Round(scaleBrt * 255);
             float brtLight2 = Mathf.Round(scaleBrt2 * 255);
             float brtLight3 = Mathf.Round(scaleBrt3 * 255);
             float brtLight4 = Mathf.Round(scaleBrt4 * 255);
             float brtLight5 = Mathf.Round(scaleBrt5 * 255);
             float brtLight6 = Mathf.Round(scaleBrt6 * 255);
-            
+
 
             /*
             float brtLight1 = Mathf.Round(scaleBrt * 255);
@@ -215,7 +225,8 @@ public class DMXControll : MonoBehaviour
             */
             //Front Left
 
-            if (direction) {
+            if (direction)
+            {
 
                 DMXLevels[0] = (byte)brtLight1;
                 DMXLevels[1] = (byte)brtLight1;//(byte)brtLight2;
@@ -223,7 +234,7 @@ public class DMXControll : MonoBehaviour
                 DMXLevels[3] = (byte)brtLight1;//(byte)brtLight4;
                 DMXLevels[4] = (byte)brtLight1;//(byte)brtLight5;
                 DMXLevels[5] = (byte)brtLight1;//(byte)brtLight6; 
-                
+
                 /*for (int i = Mathf.RoundToInt(dmxSettings[0].x) ; i < Mathf.RoundToInt(dmxSettings[0].y); i++)
                 {
                     DMXLevels[i] = (byte)brtLight1;
@@ -268,13 +279,13 @@ public class DMXControll : MonoBehaviour
             }
             else
             {
-              /*  DMXLevels[0] = (byte)brtLight6;
-                DMXLevels[1] = (byte)brtLight5;
-                DMXLevels[2] = (byte)brtLight4;
-                DMXLevels[3] = (byte)brtLight3;
-                DMXLevels[4] = (byte)brtLight2;
-                DMXLevels[5] = (byte)brtLight1; 
-*/
+                /*  DMXLevels[0] = (byte)brtLight6;
+                  DMXLevels[1] = (byte)brtLight5;
+                  DMXLevels[2] = (byte)brtLight4;
+                  DMXLevels[3] = (byte)brtLight3;
+                  DMXLevels[4] = (byte)brtLight2;
+                  DMXLevels[5] = (byte)brtLight1; 
+  */
                 DMXLevels[0] = (byte)brtLight1;
                 DMXLevels[1] = (byte)brtLight1;//(byte)brtLight2;
                 DMXLevels[2] = (byte)brtLight1;//(byte)brtLight3;
@@ -364,7 +375,7 @@ public class DMXControll : MonoBehaviour
             DMXController.Dispose();
         }
 
-        DMXController = new SerialPort(@"\\.\" + portNum);//, 57600, Parity.None, 8, StopBits.One);
+        DMXController = new SerialPort(@"\\.\" + comport);//, 57600, Parity.None, 8, StopBits.One);
 
         try
         {
