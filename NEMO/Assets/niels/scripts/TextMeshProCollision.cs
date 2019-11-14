@@ -11,7 +11,7 @@ public class TextMeshProCollision : MonoBehaviour
     {
         if (other.gameObject == player)
         {
-            Debug.Log("starting movement on " + textMeshProInstance);
+            //            Debug.Log("starting movement on " + textMeshProInstance);
             textMeshProInstance.GetComponent<fadeWhenCloserUI>().StartMoving();
         }
     }

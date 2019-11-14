@@ -255,11 +255,11 @@ public class NemoPlayer2 : MonoBehaviour
 
         if (Input.GetKeyDown(inputKeyInc))
         {
-            fullnessDiffThreshold++;
+            fullnessDiffThreshold += 1;
         }
         if (Input.GetKeyDown(inputKeyDecr))
         {
-            fullnessDiffThreshold--;
+            fullnessDiffThreshold -= 1;
         }
         if (Input.GetKey(inputKeyInc) || Input.GetKey(inputKeyDecr))
         {

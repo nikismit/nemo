@@ -401,7 +401,10 @@ public class DMXControll : MonoBehaviour
 
     void OnDisable()
     {
-        DMXController.Close();
-        dmxThread.Abort();
+        if (DMXController != null && dmxThread != null)
+        {
+            DMXController.Close();
+            dmxThread.Abort();
+        }
     }
 }
