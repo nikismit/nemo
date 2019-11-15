@@ -88,7 +88,7 @@ public class DMXControll : MonoBehaviour
         // string comport = File.ReadAllText(Application.dataPath + "/../COMDMX.txt");
         comport = File.ReadAllText(COMPORTLocation);
 
-        print("DMX will operate at " + comport);
+        print("DMX wants to operate at " + comport);
 
         OpenSerialPort();
         //Init the TX Buffer
@@ -375,13 +375,13 @@ public class DMXControll : MonoBehaviour
             DMXController.Dispose();
         }
 
-        DMXController = new SerialPort(@"\\.\" + comport);//, 57600, Parity.None, 8, StopBits.One);
+        DMXController = new SerialPort(comport);//, 57600, Parity.None, 8, StopBits.One);
 
         try
         {
             DMXController.Open();
             DMXController.ReadTimeout = 50;
-            Debug.Log("connecting:" + portNum);
+            Debug.Log("dmx connecting to: " + comport);
             updateDMX = true;
         }
         catch (System.Exception e)

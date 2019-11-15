@@ -23,6 +23,8 @@ public class PlayerSimulate : MonoBehaviour
     {
         if (simulatePlayer)
         {
+            nemoController.arduinoTest = true;
+
             timer += Time.deltaTime;
             if (timer > timerMax)
             {
@@ -48,6 +50,7 @@ public class PlayerSimulate : MonoBehaviour
         }
         else
         {
+            nemoController.arduinoTest = false;
             timer = 0;
         }
     }
