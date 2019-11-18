@@ -63,7 +63,7 @@ public class NemoController : MonoBehaviour
 
     private Thread threadForController;
 
-    public bool arduinoTest = false;
+    public bool arduinoTest;
 
 
     private IEnumerator TryConnect()

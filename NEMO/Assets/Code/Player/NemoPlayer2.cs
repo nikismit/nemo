@@ -75,6 +75,7 @@ public class NemoPlayer2 : MonoBehaviour
 
     public KeyCode inputKeyInc = KeyCode.UpArrow;
     public KeyCode inputKeyDecr = KeyCode.DownArrow;
+    public float thresholdChangeAmount = .1f;
     public Text fullnessDiffThresholdTxt;
 
     void Awake()
@@ -118,12 +119,33 @@ public class NemoPlayer2 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        fullnessDiffThreshold = Mathf.Round(fullnessDiffThreshold * 10000) / 10000;
+
+        if (Input.GetKeyDown(inputKeyInc))
+        {
+            fullnessDiffThreshold += thresholdChangeAmount;
+        }
+        if (Input.GetKeyDown(inputKeyDecr))
+        {
+            fullnessDiffThreshold -= thresholdChangeAmount;
+        }
+        if (Input.GetKey(inputKeyInc) || Input.GetKey(inputKeyDecr))
+        {
+            fullnessDiffThresholdTxt.text = "Threshold: " + fullnessDiffThreshold.ToString();
+        }
+        else
+        {
+            fullnessDiffThresholdTxt.text = "";
+        }
+
         // are they breathing in or out 
         rawFullness = controller.value;
         fulnessDelta = oldFullness - rawFullness;
         //print(fulnessDelta);
         readArray[counter] = fulnessDelta;
         counter++;
+
+        //Debug.Log(counter);
 
         if (counter >= readArray.Length)
             counter = 0;
@@ -132,6 +154,7 @@ public class NemoPlayer2 : MonoBehaviour
 
         foreach (int i in readArray)
             total += i;
+        //Debug.Log(total);
 
         if (total > 0)
         {
@@ -145,6 +168,12 @@ public class NemoPlayer2 : MonoBehaviour
                 //BAS edit below
                 //BAS: Not sure what this does, commenting it out doesn't seem to affect the movement
                 //speed = forwardSpeed * speedMultiplier;
+
+                /*niels edit
+                editting this line out makes it so the player is not able to move forward on start, since the speed is still set to 0, 
+                when the player breaths out thought, the speed gets changed to backspeed, which equals 10 as of 18/11/19
+
+                */
             }
         }
         else
@@ -243,6 +272,7 @@ public class NemoPlayer2 : MonoBehaviour
             if (backwardOrUp)
             {
                 transform.Translate(Vector3.forward * speed * diraction * Time.deltaTime);
+                //Debug.Log(Vector3.forward * speed * diraction * Time.deltaTime);
 
             }
             else
@@ -252,23 +282,6 @@ public class NemoPlayer2 : MonoBehaviour
         }
 
         fullness = CalculateFullness();
-
-        if (Input.GetKeyDown(inputKeyInc))
-        {
-            fullnessDiffThreshold += 1;
-        }
-        if (Input.GetKeyDown(inputKeyDecr))
-        {
-            fullnessDiffThreshold -= 1;
-        }
-        if (Input.GetKey(inputKeyInc) || Input.GetKey(inputKeyDecr))
-        {
-            fullnessDiffThresholdTxt.text = "Threshold: " + fullnessDiffThreshold;
-        }
-        else
-        {
-            fullnessDiffThresholdTxt.text = "";
-        }
     }
 
     float CalculateFullness()
