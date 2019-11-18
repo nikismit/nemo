@@ -37,7 +37,7 @@ public class NemoController : MonoBehaviour
 
     public Text text;
     // for the controller
-    public string portName = "COM10";
+    public string portName = "COM10";           //not using this anymore check line 80
     private SerialPort NemoControllerPort = new SerialPort();
     private bool runThread = false;
 
@@ -55,13 +55,24 @@ public class NemoController : MonoBehaviour
     public GameEvent BeltDisconnectedEvent;         // Event that invokes on disconnecting the belt
 
     public bool _isBeltConnected;                   //niels removed false
-    public int portSelect = 0;
+    public string portSelect = "COM5";              //not using this anymore, check line 80
+
+    private string comport;
+
+    public string COMPORTLocation = "C:/Users/_Beheerder/MONOBANDA/Com_ports/COMAIO_Belt.txt";
+
+    private Thread threadForController;
+
+    public bool arduinoTest = false;
+
+
     private IEnumerator TryConnect()
     {
         while ((value == 666 || value == 0) && (!runThread))
         {
-            ConnectToNemoController();
-            yield return new WaitForSeconds(1);
+            //ConnectToNemoController();
+            ConnectToNemoController2();
+            yield return new WaitForSeconds(5);
         }
     }
 
@@ -73,8 +84,17 @@ public class NemoController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(TryConnect());
+        threadForController = new Thread(ThreadWorker);
+
+        //Example: "COM4" - does not work
+        comport = File.ReadAllText(COMPORTLocation);
+
+        print("AIO wants to operate at " + comport);
+
+        //StartCoroutine(TryConnect());
         //text.text = "poop";
+
+        ConnectToNemoController2();
     }
 
     // Update is called once per frame
@@ -83,7 +103,11 @@ public class NemoController : MonoBehaviour
         if (!runThread)
             return;
 
-        value = GetValueFromBelt(); 
+
+        if (!arduinoTest)
+        {
+            value = GetValueFromBelt();
+        }
         //text.text = "poop: " + value;
 
         // Belt is connected
@@ -125,12 +149,12 @@ public class NemoController : MonoBehaviour
         bool found = false;
 
         string[] ports = SerialPort.GetPortNames();
-        CM_Debug.Log("NEMO Controller", ports.Length + " Com ports found");
+        //CM_Debug.Log("NEMO Controller", ports.Length + " Com ports found");
 
         if (ports.Length == 0)
         {
             // no controller found
-            CM_Debug.Log("NEMO Controller", "nothing found");
+            //CM_Debug.Log("NEMO Controller", "nothing found");
         }
         else
         {
@@ -138,7 +162,7 @@ public class NemoController : MonoBehaviour
             //{
             try  // try to open a port, if it fails try the next
             {
-                NemoControllerPort.PortName = ports[portSelect];
+                NemoControllerPort.PortName = comport;
                 //NemoControllerPort.DtrEnable = false;
                 NemoControllerPort.BaudRate = 115200;
                 //NemoControllerPort.Parity = Parity.None;
@@ -151,9 +175,9 @@ public class NemoController : MonoBehaviour
                 NemoControllerPort.Open();
                 //deepController.DtrEnable = true; // will not receive data without this
 
-                CM_Debug.Log("NEMO Controller", NemoControllerPort.PortName);
+                //CM_Debug.Log("NEMO Controller", NemoControllerPort.PortName);
 
-                CM_Debug.Log("NEMO Controller", "Trying port: " + ports[portSelect] + " ");
+                //CM_Debug.Log("NEMO Controller", "Trying port: " + portSelect + " ");
 
 
 
@@ -210,6 +234,49 @@ public class NemoController : MonoBehaviour
         }
     }
 
+    void ConnectToNemoController2()
+    {
+        bool found = false;
+
+        if (NemoControllerPort != null)
+        {
+            NemoControllerPort.Close();
+            NemoControllerPort.Dispose();
+        }
+
+        NemoControllerPort = new SerialPort(comport);
+
+        try
+        {
+            NemoControllerPort.Open();
+            NemoControllerPort.BaudRate = 115200;
+            NemoControllerPort.ReadTimeout = 50;
+            Debug.Log("aio belt connecting to: " + comport);
+            found = true;
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log("error met de belt");
+            Debug.LogException(e);
+        }
+
+        if (found)
+        {
+            // portName = NemoControllerPort.PortName;
+
+            // CM_Debug.Log("NEMO Controller", "Controller is detected on " + portName);
+            // CM_Debug.Log("NEMO Controller", "is " + NemoControllerPort.PortName + " open: " + NemoControllerPort.IsOpen);
+
+            // creat the thread for the controller
+            runThread = true;
+            // Thread threadForController = new Thread(new ThreadStart(ThreadWorker));
+            threadForController.Start();
+
+            // it is working and kick things off 
+
+        }
+    }
+
     void ThreadWorker()
     {
         while (runThread)
@@ -218,8 +285,6 @@ public class NemoController : MonoBehaviour
             {
                 try
                 {
-
-
                     NemoControllerValueRaw = NemoControllerPort.ReadLine();
                 }
                 catch (System.Exception) { }
@@ -230,6 +295,7 @@ public class NemoController : MonoBehaviour
     void OnDisable()
     {
         NemoControllerPort.Close();
+        threadForController.Abort();
         runThread = false;
     }
 }

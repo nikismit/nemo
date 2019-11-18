@@ -155,7 +155,19 @@ public class NemoPlayer2 : MonoBehaviour
                 // breathing out maybe 
                 breathState = States.breathingOut;
                 //diraction = -1;
-                speed = backSpeed * speedMultiplier;//*(controller.breathInTimer*breathSpeedAdd);
+
+                /*
+                niels edit
+                
+                removed the speedmultiplier, dont want to have this anymore as of 7/10/19
+                 
+                the old speed calc:
+                speed = backSpeed * speedMultiplier ;//*(controller.breathInTimer*breathSpeedAdd); 
+
+                 */
+
+                speed = backSpeed;
+
                 //speed = 3;
             }
         }
@@ -243,11 +255,11 @@ public class NemoPlayer2 : MonoBehaviour
 
         if (Input.GetKeyDown(inputKeyInc))
         {
-            fullnessDiffThreshold++;
+            fullnessDiffThreshold += 1;
         }
         if (Input.GetKeyDown(inputKeyDecr))
         {
-            fullnessDiffThreshold--;
+            fullnessDiffThreshold -= 1;
         }
         if (Input.GetKey(inputKeyInc) || Input.GetKey(inputKeyDecr))
         {
