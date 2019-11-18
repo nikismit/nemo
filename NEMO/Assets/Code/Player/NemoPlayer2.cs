@@ -73,6 +73,10 @@ public class NemoPlayer2 : MonoBehaviour
     private float whiteBorderSmoothIn = 0.25f;
     private float whiteBorderSmoothOut = 2f;
 
+    public KeyCode inputKeyInc = KeyCode.UpArrow;
+    public KeyCode inputKeyDecr = KeyCode.DownArrow;
+    public Text fullnessDiffThresholdTxt;
+
     void Awake()
     {
         //singleton stuff
@@ -151,19 +155,7 @@ public class NemoPlayer2 : MonoBehaviour
                 // breathing out maybe 
                 breathState = States.breathingOut;
                 //diraction = -1;
-
-                /*
-                niels edit
-                
-                removed the speedmultiplier, dont want to have this anymore as of 7/10/19
-                 
-                the old speed calc:
-                speed = backSpeed * speedMultiplier ;//*(controller.breathInTimer*breathSpeedAdd); 
-
-                 */
-
-                speed = backSpeed;
-
+                speed = backSpeed * speedMultiplier;//*(controller.breathInTimer*breathSpeedAdd);
                 //speed = 3;
             }
         }
@@ -248,6 +240,23 @@ public class NemoPlayer2 : MonoBehaviour
         }
 
         fullness = CalculateFullness();
+
+        if (Input.GetKeyDown(inputKeyInc))
+        {
+            fullnessDiffThreshold++;
+        }
+        if (Input.GetKeyDown(inputKeyDecr))
+        {
+            fullnessDiffThreshold--;
+        }
+        if (Input.GetKey(inputKeyInc) || Input.GetKey(inputKeyDecr))
+        {
+            fullnessDiffThresholdTxt.text = "Threshold: " + fullnessDiffThreshold;
+        }
+        else
+        {
+            fullnessDiffThresholdTxt.text = "";
+        }
     }
 
     float CalculateFullness()
