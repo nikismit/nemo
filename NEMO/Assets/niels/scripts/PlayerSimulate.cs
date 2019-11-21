@@ -14,7 +14,6 @@ public class PlayerSimulate : MonoBehaviour
     private bool toggle = false;
     public bool slowIncrease;
     private float t;
-    public float smoothTime = 3;
     private bool a;
 
     // Update is called once per frame

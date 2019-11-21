@@ -23,7 +23,9 @@ public class NemoPlayer2 : MonoBehaviour
 
     //fullnessDiffThreshold: How big does the fullness difference need to be to be counted as a deep enough breath to be counted
     public float fullnessDiffThreshold = 20f;
-
+    public float fullnessDiffThresholdLow = 2f;
+    public bool autoMove = false;
+    public float autoSpeed = 10;
 
     private int counter = 0;
     private int rawFullness;
@@ -75,8 +77,11 @@ public class NemoPlayer2 : MonoBehaviour
 
     public KeyCode inputKeyInc = KeyCode.UpArrow;
     public KeyCode inputKeyDecr = KeyCode.DownArrow;
+    public KeyCode inputKeyIncLow = KeyCode.RightArrow;
+    public KeyCode inputKeyDecrLow = KeyCode.LeftArrow;
     public float thresholdChangeAmount = .1f;
     public Text fullnessDiffThresholdTxt;
+    public Text fullnessDiffThresholdLowTxt;
 
     void Awake()
     {
@@ -120,6 +125,7 @@ public class NemoPlayer2 : MonoBehaviour
     void Update()
     {
         fullnessDiffThreshold = Mathf.Round(fullnessDiffThreshold * 10000) / 10000;
+        fullnessDiffThresholdLow = Mathf.Round(fullnessDiffThresholdLow * 10000) / 10000;
 
         if (Input.GetKeyDown(inputKeyInc))
         {
@@ -129,13 +135,23 @@ public class NemoPlayer2 : MonoBehaviour
         {
             fullnessDiffThreshold -= thresholdChangeAmount;
         }
-        if (Input.GetKey(inputKeyInc) || Input.GetKey(inputKeyDecr))
+        if (Input.GetKeyDown(inputKeyDecrLow))
+        {
+            fullnessDiffThresholdLow -= thresholdChangeAmount;
+        }
+        if (Input.GetKeyDown(inputKeyIncLow))
+        {
+            fullnessDiffThresholdLow += thresholdChangeAmount;
+        }
+        if (Input.GetKey(inputKeyInc) || Input.GetKey(inputKeyDecr) || Input.GetKey(inputKeyIncLow) || Input.GetKey(inputKeyDecrLow))
         {
             fullnessDiffThresholdTxt.text = "Threshold: " + fullnessDiffThreshold.ToString();
+            fullnessDiffThresholdLowTxt.text = "Threshold low: " + fullnessDiffThresholdLow.ToString();
         }
         else
         {
             fullnessDiffThresholdTxt.text = "";
+            fullnessDiffThresholdLowTxt.text = "";
         }
 
         // are they breathing in or out 
@@ -220,8 +236,10 @@ public class NemoPlayer2 : MonoBehaviour
             fullnessDifference += readArray[i];
         }
 
-        if (fullnessDifference > fullnessDiffThreshold || fullnessDifference < -fullnessDiffThreshold)
+        if (fullnessDifference > fullnessDiffThreshold || fullnessDifference < -fullnessDiffThreshold) //the old way to determine the players breathing and moving
         {
+            autoMove = false;
+
             if (fulnessDelta != 0 && breathState == States.breathingIn)
             {
 
@@ -259,8 +277,49 @@ public class NemoPlayer2 : MonoBehaviour
 
             }
         }
-        // BAS EDIT
-        //if change over time is too small (meaning breath not deep enough): ignore, and just smooth
+
+        else if (fullnessDifference > fullnessDiffThresholdLow || fullnessDifference < -fullnessDiffThresholdLow) //new way for people who struggle to make big enough changes move on a fixed movement
+        {
+            autoMove = true;
+
+            if (fulnessDelta != 0 && breathState == States.breathingIn)
+            {
+                //BAS edit below
+                //Bas: When breathing in, movement smoothes to standstill (0). When breathing out it smoothes to backwards movement (-1)
+                //diraction = Mathf.Lerp(diraction, 1, Time.deltaTime * smoother);
+
+                //UIT VOOR VOORWAARDSE BEWEGING
+                diraction = Mathf.Lerp(diraction, 0.1f, Time.deltaTime * smoother);
+
+                // AAN VOOR GEEN VOORWAARDSE BEWEGING diraction = Mathf.Lerp(diraction, 0.0f, Time.deltaTime * smoother);
+
+                //BAS edit
+                //Changes the opacity of white border based on fullness
+                whiteBorderAlpha = Mathf.Lerp(whiteBorderAlpha, whiteBorderAlphaMax, Time.deltaTime * whiteBorderSmoothIn);
+                whiteBorderColor = new Color(1, 1, 1, whiteBorderAlpha);
+                whiteBorder.GetComponent<Image>().color = whiteBorderColor;
+
+            }
+
+            // BAS EDIT
+            //if change over time is too small (meaning breath not deep enough): ignore, and just smooth
+            if (fulnessDelta != 0 && breathState == States.breathingOut)
+            {
+                diraction = Mathf.Lerp(diraction, -1, Time.deltaTime * smoother);
+
+                //BAS edit
+                //Changes the opacity of white border based on breathing
+                whiteBorderAlpha = Mathf.Lerp(whiteBorderAlpha, whiteBorderAlphaMin, Time.deltaTime * whiteBorderSmoothOut);
+                whiteBorderColor = new Color(1, 1, 1, whiteBorderAlpha);
+                whiteBorder.GetComponent<Image>().color = whiteBorderColor;
+            }
+
+            if (fulnessDelta == 0)
+            {
+                // diraction = Mathf.Lerp(diraction, 0, Time.deltaTime * smoother);
+
+            }
+        }
         else
         {
             diraction = Mathf.Lerp(diraction, 0, Time.deltaTime * smoother);
@@ -269,11 +328,16 @@ public class NemoPlayer2 : MonoBehaviour
         // move the player
         if (_canMove && controller.normalBreathing)
         {
-            if (backwardOrUp)
+            if (backwardOrUp && !autoMove) //old to determine the actual speed
             {
                 transform.Translate(Vector3.forward * speed * diraction * Time.deltaTime);
-                //Debug.Log(Vector3.forward * speed * diraction * Time.deltaTime);
+                //Debug.Log("normal:" + Vector3.forward * speed * diraction * Time.deltaTime);
 
+            }
+            else if (backwardOrUp && autoMove) //new so people move a certain distance
+            {
+                transform.Translate(Vector3.forward * autoSpeed * diraction * Time.deltaTime);
+                //Debug.Log("auto: " + Vector3.forward * autoSpeed * diraction * Time.deltaTime);
             }
             else
             {
