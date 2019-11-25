@@ -6,14 +6,17 @@ public class AttractMode : MonoBehaviour
 {
     public NemoController nemoController;
     public DMXControll dMXControll;
-    public float AFKTimerMax;
+    public ObjectScaler objectScaler;
+    public GameObject mutateShader;
 
+    public GameEventListener[] test;
+
+    public float AFKTimerMax;
     public float timer = 0;
 
-    // Start is called before the first frame update
     void Start()
     {
-
+        test = mutateShader.GetComponentsInChildren<GameEventListener>();
     }
 
     // Update is called once per frame
@@ -25,14 +28,28 @@ public class AttractMode : MonoBehaviour
 
             if (timer > AFKTimerMax)
             {
-                dMXControll.simulate = true;
+                StartAttractMode(true);
                 timer = 0;
             }
         }
         else
         {
-            dMXControll.simulate = false;
+            StartAttractMode(false);
             timer = 0;
+        }
+    }
+
+    void StartAttractMode(bool checker)
+    {
+        dMXControll.simulate = checker;
+
+        if (checker)
+        {
+            
+        }
+        else
+        {
+
         }
     }
 }
