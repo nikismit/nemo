@@ -89,12 +89,25 @@ public class NemoController : MonoBehaviour
         //Example: "COM4" - does not work
         comport = File.ReadAllText(COMPORTLocation);
 
-        print("AIO wants to operate at " + comport);
+        if (comport.Contains("COM"))
+        {
+            print("AIO wants to operate at " + comport);
+
+            ConnectToNemoController2();
+        }
+        else
+        {
+            Debug.Log("nemocontroller text file doesnt not contain COM. Currently says: " + comport + " changing comport to default one");
+            comport = "COM4";
+
+            print("AIO wants to operate at " + comport);
+
+            ConnectToNemoController2();
+        }
 
         //StartCoroutine(TryConnect());
         //text.text = "poop";
 
-        ConnectToNemoController2();
     }
 
     // Update is called once per frame

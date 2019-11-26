@@ -81,6 +81,8 @@ public class DMXControll : MonoBehaviour
 
     public string COMPORTLocation = "C:/Users/_Beheerder/MONOBANDA/Com_ports/COMDMX_Lights.txt";
 
+    public bool autoFader;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -88,20 +90,39 @@ public class DMXControll : MonoBehaviour
         // string comport = File.ReadAllText(Application.dataPath + "/../COMDMX.txt");
         comport = File.ReadAllText(COMPORTLocation);
 
-        print("DMX wants to operate at " + comport);
+        if (comport.Contains("COM"))
+        {
+            print("DMX wants to operate at " + comport);
 
-        OpenSerialPort();
-        //Init the TX Buffer
-        initTXBuffer();
+            OpenSerialPort();
+            //Init the TX Buffer
+            initTXBuffer();
 
-        //Start the serial io thread
-        dmxThread = new Thread(ThreadedIO);
-        dmxThread.Start();
+            //Start the serial io thread
+            dmxThread = new Thread(ThreadedIO);
+            dmxThread.Start();
 
-        //Flag to send default DMX values
-        // updateDMX = true;
+            //Flag to send default DMX values
+            // updateDMX = true;
+        }
+        else
+        {
+            Debug.Log("dmxcontroller text file doesnt not contain COM. Currently says: " + comport + " changing comport to default one");
+            comport = "COM3";
 
+            print("DMX wants to operate at " + comport);
 
+            OpenSerialPort();
+            //Init the TX Buffer
+            initTXBuffer();
+
+            //Start the serial io thread
+            dmxThread = new Thread(ThreadedIO);
+            dmxThread.Start();
+
+            //Flag to send default DMX values
+            // updateDMX = true;
+        }
     }
 
 

@@ -14,6 +14,11 @@ public class AttractMode : MonoBehaviour
     public float AFKTimerMax;
     public float timer = 0;
 
+    public bool active;
+    public bool scaleGrowing;
+
+    public int once;
+
     void Start()
     {
         test = mutateShader.GetComponentsInChildren<GameEventListener>();
@@ -22,34 +27,53 @@ public class AttractMode : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        scaleGrowing = objectScaler.IsGrowing;
+
         if (!nemoController._isBeltConnected)
         {
-            timer += Time.deltaTime;
-
-            if (timer > AFKTimerMax)
+            if (!active)
             {
-                StartAttractMode(true);
-                timer = 0;
+                timer += Time.deltaTime;
+
+                if (timer > AFKTimerMax)
+                {
+                    timer = 0;
+                    active = true;
+                }
             }
         }
         else
         {
-            StartAttractMode(false);
             timer = 0;
+            active = false;
         }
-    }
 
-    void StartAttractMode(bool checker)
-    {
-        dMXControll.simulate = checker;
-
-        if (checker)
+        if (active)
         {
-            
+            if (objectScaler.IsGrowing)
+            {
+                if (once < 1)
+                {
+                    test[0].Response.Invoke();
+                    once++;
+                }
+
+                dMXControll.simulate = true; //moet fade in zijn, edit later een fucntie in dmxcontroller
+            }
+            else
+            {
+                if (once >= 1)
+                {
+                    test[1].Response.Invoke();
+                    once--;
+                }
+
+                dMXControll.simulate = false; //moet fade out zijn, edit later een fucntie in dmxcontroller
+            }
         }
         else
         {
-
+            dMXControll.simulate = false;
         }
     }
 }
