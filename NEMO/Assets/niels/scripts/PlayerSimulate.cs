@@ -15,6 +15,8 @@ public class PlayerSimulate : MonoBehaviour
     public bool slowIncrease;
     private float t;
     private bool a;
+    public ObjectScaler objectScaler;
+    public bool syncWithScalers;
 
     // Update is called once per frame
     void Update()
@@ -53,21 +55,60 @@ public class PlayerSimulate : MonoBehaviour
 
             if (toggle && !slowIncrease)
             {
-                nemoController.value++;
+                if (!syncWithScalers)
+                {
+                    nemoController.value++;
+                }
+                else
+                {
+                    if (objectScaler.IsGrowing)
+                    {
+                        nemoController.value++;
+                    }
+                }
             }
             else if (!slowIncrease)
             {
-                nemoController.value--;
+                if (!syncWithScalers)
+                {
+                    nemoController.value--;
+                }
+                else
+                {
+                    if (objectScaler.IsGrowing)
+                    {
+                        nemoController.value--;
+                    }
+                }
             }
-
 
             else if (toggle && slowIncrease)
             {
-                In();
+                if (!syncWithScalers)
+                {
+                    In();
+                }
+                else
+                {
+                    if (objectScaler.IsGrowing)
+                    {
+                        In();
+                    }
+                }
             }
             else if (!toggle && slowIncrease)
             {
-                Out();
+                if (!syncWithScalers)
+                {
+                    Out();
+                }
+                else
+                {
+                    if (!objectScaler.IsGrowing)
+                    {
+                        Out();
+                    }
+                }
             }
         }
         else

@@ -124,7 +124,7 @@ public class NemoController : MonoBehaviour
         //text.text = "poop: " + value;
 
         // Belt is connected
-        if (value != 666 && value != 0 && !_isBeltConnected)
+        if (value != 666 && value != 0 && !_isBeltConnected && !arduinoTest)
         {
             _isBeltConnected = true;
             BeltConnectedEvent.Invoke();
@@ -133,7 +133,7 @@ public class NemoController : MonoBehaviour
         }
 
         // Belt is disconnected
-        if (NemoControllerValueRaw == "B:0" && _isBeltConnected)
+        if (NemoControllerValueRaw == "B:0" && _isBeltConnected && !arduinoTest)
         {
             _isBeltConnected = false;
             BeltDisconnectedEvent.Invoke();

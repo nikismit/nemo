@@ -8,6 +8,7 @@ public class AttractMode : MonoBehaviour
     public DMXControll dMXControll;
     public ObjectScaler objectScaler;
     public GameObject mutateShader;
+    public fullAutoPlay fullAutoPlay;
 
     public GameEventListener[] test;
 
@@ -29,7 +30,7 @@ public class AttractMode : MonoBehaviour
     {
         scaleGrowing = objectScaler.IsGrowing;
 
-        if (!nemoController._isBeltConnected)
+        if (!nemoController._isBeltConnected && !fullAutoPlay.belt)
         {
             if (!active)
             {

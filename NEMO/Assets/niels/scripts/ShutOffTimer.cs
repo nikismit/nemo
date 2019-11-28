@@ -6,7 +6,7 @@ public class ShutOffTimer : MonoBehaviour
 {
     public NEMO_GameEvents nemo_GameEvents;
     public float maxTimer = 300;
-    private float timer;
+    public float timer;
 
     // Start is called before the first frame update
     void Start()
