@@ -25,6 +25,10 @@ public class PlayerSimulate : MonoBehaviour
         {
             syncWithScalers = false;
         }
+        else
+        {
+            syncWithScalers = true;
+        }
 
         if (syncWithScalers && simulatePlayer)
         {
@@ -106,6 +110,7 @@ public class PlayerSimulate : MonoBehaviour
         else
         {
             timer = 0;
+            t = 0;
         }
     }
 

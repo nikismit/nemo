@@ -22,6 +22,8 @@ public class fullAutoPlay : MonoBehaviour
     public bool belt;
     private bool player;
 
+    private int i;
+
     // Update is called once per frame
     void Update()
     {
@@ -66,19 +68,33 @@ public class fullAutoPlay : MonoBehaviour
         {
             if (gameState == "WaitingForPlayer")
             {
-                StartCoroutine("AutoStart");
+                if (i == 0)
+                {
+                    i++;
+                    StartCoroutine("AutoStart");
+                }
             }
         }
     }
 
     private IEnumerator AutoStart()
     {
+        if (belt)
+        {
+            yield return new WaitForSeconds(overlapTime);
+            BeltDisconnect.Invoke();
+            belt = false;
+            playerSimulate.simulatePlayer = false;
+            player = false;
+        }
         yield return new WaitForSeconds(overlapTime);
         BeltConnect.Invoke();
+        belt = true;
         yield return new WaitForSeconds(overlapTime);
         TutorialFinished.Invoke();
-        yield return new WaitForSeconds(overlapTime);
         playerSimulate.simulatePlayer = true;
+        player = true;
         StopCoroutine("AutoStart");
+        i = 0;
     }
 }
