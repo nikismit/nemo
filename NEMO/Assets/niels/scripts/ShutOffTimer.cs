@@ -27,5 +27,9 @@ public class ShutOffTimer : MonoBehaviour
                 timer = 0;
             }
         }
+        else
+        {
+            timer = 0;
+        }
     }
 }

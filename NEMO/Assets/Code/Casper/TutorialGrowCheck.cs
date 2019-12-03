@@ -18,9 +18,9 @@ public class TutorialGrowCheck : MonoBehaviour
     public GameEvent TutorialInhalingEvent;
 
     private ObjectScaler _objectScaler;
-    private bool _isRoutineRunning = false;
-    private bool _isGrowRoutine = false;
-    private int _counter = 0;
+    public bool _isRoutineRunning = false;
+    public bool _isGrowRoutine = false;
+    public int _counter = 0;
 
     private void Awake()
     {
@@ -43,13 +43,13 @@ public class TutorialGrowCheck : MonoBehaviour
             why check if the routine is running, you alreadyhave eveything you need with the grow routine (growing or not growing)
         */
 
-        // if (!_isRoutineRunning)
-        // {
-        //     _counter = 0;
-        //     InvokeWrongEvent();
-        //     CM_Debug.Log("NEMO Tutorial", "COUNTER: " + _counter);
-        //     return;
-        // }
+        if (!_isRoutineRunning)
+        {
+            _counter = 0;
+            InvokeWrongEvent();
+            CM_Debug.Log("NEMO Tutorial", "COUNTER: " + _counter);
+            return;
+        }
 
         _counter++;
         InvokeCorrectEvent();
@@ -72,13 +72,13 @@ public class TutorialGrowCheck : MonoBehaviour
             why check if the routine is running, you alreadyhave eveything you need with the grow routine (growing or not growing)
         */
 
-        // if (!_isRoutineRunning)
-        // {
-        //     _counter = 0;
-        //     InvokeWrongEvent();
-        //     CM_Debug.Log("NEMO Tutorial", "COUNTER: " + _counter);
-        //     return;
-        // }
+        if (!_isRoutineRunning)
+        {
+            _counter = 0;
+            InvokeWrongEvent();
+            CM_Debug.Log("NEMO Tutorial", "COUNTER: " + _counter);
+            return;
+        }
 
         _counter++;
         InvokeCorrectEvent();
