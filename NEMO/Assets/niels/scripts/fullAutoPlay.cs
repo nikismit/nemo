@@ -17,6 +17,7 @@ public class fullAutoPlay : MonoBehaviour
     public string gameState;
 
     public bool auto;
+    public bool breathingDuringTutorial;
     public int overlapTime;
 
     public bool belt;
@@ -90,10 +91,19 @@ public class fullAutoPlay : MonoBehaviour
         yield return new WaitForSeconds(overlapTime);
         BeltConnect.Invoke();
         belt = true;
-        yield return new WaitForSeconds(overlapTime);
-        TutorialFinished.Invoke();
-        playerSimulate.simulatePlayer = true;
-        player = true;
+        if (breathingDuringTutorial)
+        {
+            playerSimulate.simulatePlayer = true;
+            player = true;
+        }
+        else
+        {
+            yield return new WaitForSeconds(overlapTime);
+            TutorialFinished.Invoke();
+            playerSimulate.simulatePlayer = true;
+            player = true;
+        }
+
         StopCoroutine("AutoStart");
         i = 0;
     }
