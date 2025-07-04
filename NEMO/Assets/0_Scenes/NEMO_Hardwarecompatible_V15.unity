@@ -3740,7 +3740,7 @@ MonoBehaviour:
   triggerDistance: 15
   closeTriggerDistance: 5
   fadeSpeed: 5
-  moveSpeed: 0.04
+  moveSpeed: 2.4
   rotateAngle: -1
   rotateSpeed: 0.1
   distanceDeactivate: 10
@@ -33281,6 +33281,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: DebugManager
       objectReference: {fileID: 0}
+    - target: {fileID: 1390551023787081364, guid: ed2adfd0f565b544ca8f4c6812cb1af8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1390551023787081366, guid: ed2adfd0f565b544ca8f4c6812cb1af8,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -40919,7 +40924,7 @@ MonoBehaviour:
   triggerDistance: 15
   closeTriggerDistance: 5
   fadeSpeed: 5
-  moveSpeed: 0.04
+  moveSpeed: 2.4
   rotateAngle: 1
   rotateSpeed: 0.1
   distanceDeactivate: 10
@@ -77406,7 +77411,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nemoController: {fileID: 1421222480}
-  simulatePlayer: 1
+  simulatePlayer: 0
   test: 0
   timerMaxIn: 3
   timerMaxOut: 2
@@ -77433,7 +77438,7 @@ MonoBehaviour:
   playerSimulate: {fileID: 1025846925}
   gameEvents: {fileID: 1656084173}
   gameState: 
-  auto: 1
+  auto: 0
   overlapTime: 5
 --- !u!1001 &1025941511
 PrefabInstance:
@@ -89033,7 +89038,7 @@ MonoBehaviour:
   triggerDistance: 15
   closeTriggerDistance: 5
   fadeSpeed: 5
-  moveSpeed: 0.04
+  moveSpeed: 2.4
   rotateAngle: 1
   rotateSpeed: 0.1
   distanceDeactivate: 10
@@ -135424,7 +135429,7 @@ MonoBehaviour:
   triggerDistance: 15
   closeTriggerDistance: 5
   fadeSpeed: 5
-  moveSpeed: 0.04
+  moveSpeed: 2.4
   rotateAngle: -1
   rotateSpeed: 0.1
   distanceDeactivate: 10
@@ -138295,7 +138300,7 @@ MonoBehaviour:
   triggerDistance: 15
   closeTriggerDistance: 5
   fadeSpeed: 5
-  moveSpeed: 0.04
+  moveSpeed: 2.4
   rotateAngle: 1
   rotateSpeed: 0.1
   distanceDeactivate: 10
@@ -195243,7 +195248,7 @@ MonoBehaviour:
   FogTransitionSize: 5
   MaxLightDistance: 128
   AboveFogPercent: 0.1
-  Offset: {x: 32929.387, y: 32929.387, z: 0}
+  Offset: {x: 32993.71, y: 32993.71, z: 0}
 --- !u!1 &7276150287352408216
 GameObject:
   m_ObjectHideFlags: 0
@@ -198045,7 +198050,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 421834, guid: 1c8c49d1648ad6847876b5c802085d9f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.6019554
+      value: -4.59
       objectReference: {fileID: 0}
     - target: {fileID: 421834, guid: 1c8c49d1648ad6847876b5c802085d9f, type: 3}
       propertyPath: m_LocalPosition.z

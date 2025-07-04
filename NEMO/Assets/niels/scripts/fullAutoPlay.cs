@@ -20,7 +20,7 @@ public class fullAutoPlay : MonoBehaviour
     public int overlapTime;
 
     private bool belt;
-    private bool player;
+    private bool player = false;
 
     // Update is called once per frame
     void Update()

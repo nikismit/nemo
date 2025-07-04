@@ -39,7 +39,7 @@ public class fadeWhenCloserUI : MonoBehaviour
 
         if (moving)
         {
-            transform.position += new Vector3(0, 0, moveSpeed);
+            transform.position += new Vector3(0, 0, moveSpeed * Time.deltaTime);
             if (distance < triggerDistance && distance > closeTriggerDistance)
             {
                 transform.Rotate(new Vector3(0, 0, rotateAngle) * (rotateSpeed * Time.deltaTime));
